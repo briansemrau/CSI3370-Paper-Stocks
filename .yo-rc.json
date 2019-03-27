@@ -1,0 +1,35 @@
+{
+    "generator-jhipster": {
+        "promptValues": {
+            "packageName": "com.csi3370.paperstocks"
+        },
+        "jhipsterVersion": "5.8.2",
+        "applicationType": "monolith",
+        "baseName": "CSI3370",
+        "packageName": "com.csi3370.paperstocks",
+        "packageFolder": "com/csi3370/paperstocks",
+        "serverPort": "8080",
+        "authenticationType": "jwt",
+        "cacheProvider": "ehcache",
+        "enableHibernateCache": true,
+        "websocket": false,
+        "databaseType": "sql",
+        "devDatabaseType": "h2Disk",
+        "prodDatabaseType": "mysql",
+        "searchEngine": false,
+        "messageBroker": false,
+        "serviceDiscoveryType": false,
+        "buildTool": "gradle",
+        "enableSwaggerCodegen": false,
+        "jwtSecretKey": "ZjQ4NTZiOTI1YzU3MzA1MjYwZGIyOGRkNzQ5MTU3Yzg4NzY0NDhhYzg0ODU3OGE2NGQ2ZTBhMTA5OWI3ZGI1ODk3M2Q4NmUzNzUwOTBhZTNmOTI1NzFkNjg3ZjcwNzYxZjA4YjZlYTY5MGU3YjY4ZDY2Zjc1YThjYzk2MjE2MGU=",
+        "clientFramework": "angularX",
+        "useSass": true,
+        "clientPackageManager": "npm",
+        "testFrameworks": [],
+        "jhiPrefix": "jhi",
+        "entitySuffix": "",
+        "dtoSuffix": "DTO",
+        "otherModules": [],
+        "enableTranslation": false
+    }
+}
