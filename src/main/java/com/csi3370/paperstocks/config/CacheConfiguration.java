@@ -38,6 +38,10 @@ public class CacheConfiguration {
             cm.createCache(com.csi3370.paperstocks.domain.User.class.getName(), jcacheConfiguration);
             cm.createCache(com.csi3370.paperstocks.domain.Authority.class.getName(), jcacheConfiguration);
             cm.createCache(com.csi3370.paperstocks.domain.User.class.getName() + ".authorities", jcacheConfiguration);
+            cm.createCache(com.csi3370.paperstocks.domain.Portfolio.class.getName(), jcacheConfiguration);
+            cm.createCache(com.csi3370.paperstocks.domain.Portfolio.class.getName() + ".shares", jcacheConfiguration);
+            cm.createCache(com.csi3370.paperstocks.domain.Share.class.getName(), jcacheConfiguration);
+            cm.createCache(com.csi3370.paperstocks.domain.Credit.class.getName(), jcacheConfiguration);
             // jhipster-needle-ehcache-add-entry
         };
     }

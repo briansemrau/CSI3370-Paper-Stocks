@@ -1,0 +1,37 @@
+entity Portfolio {
+	name String
+}
+
+entity Share {
+	ticker String required
+    quantity Integer required
+}
+
+entity Credit {
+	credit Double
+}
+
+relationship OneToOne {
+	 Credit{user(login)} to User
+}
+
+relationship OneToMany {
+	Portfolio{share} to Share
+}
+
+relationship ManyToOne {
+    Portfolio{user(login)} to User{portfolio}
+}
+
+// Set pagination options
+paginate Share, Portfolio with infinite-scroll
+//paginate Portfolio with pagination
+
+// Use Data Transfer Objects (DTO)
+// dto * with mapstruct
+
+// Set service options to all except few
+//service all with serviceImpl except Employee, Job
+
+// Set an angular suffix
+// angularSuffix * with mySuffix
