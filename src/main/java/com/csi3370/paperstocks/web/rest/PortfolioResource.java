@@ -1,12 +1,13 @@
 package com.csi3370.paperstocks.web.rest;
 import com.csi3370.paperstocks.domain.Portfolio;
 import com.csi3370.paperstocks.repository.PortfolioRepository;
+import com.csi3370.paperstocks.security.SecurityUtils;
 import com.csi3370.paperstocks.web.rest.errors.BadRequestAlertException;
 import com.csi3370.paperstocks.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -40,10 +41,13 @@ public class PortfolioResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/portfolios")
-    public ResponseEntity<Portfolio> createPortfolio(@RequestBody Portfolio portfolio) throws URISyntaxException {
+    public ResponseEntity<?> createPortfolio(@RequestBody Portfolio portfolio) throws URISyntaxException {
         log.debug("REST request to save Portfolio : {}", portfolio);
         if (portfolio.getId() != null) {
             throw new BadRequestAlertException("A new portfolio cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (!portfolio.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         Portfolio result = portfolioRepository.save(portfolio);
         return ResponseEntity.created(new URI("/api/portfolios/" + result.getId()))
@@ -61,10 +65,14 @@ public class PortfolioResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/portfolios")
-    public ResponseEntity<Portfolio> updatePortfolio(@RequestBody Portfolio portfolio) throws URISyntaxException {
+    public ResponseEntity<?> updatePortfolio(@RequestBody Portfolio portfolio) throws URISyntaxException {
         log.debug("REST request to update Portfolio : {}", portfolio);
         if (portfolio.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
+        }
+        if (portfolio.getUser() != null &&
+            !portfolio.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
         Portfolio result = portfolioRepository.save(portfolio);
         return ResponseEntity.ok()
@@ -80,7 +88,7 @@ public class PortfolioResource {
     @GetMapping("/portfolios")
     public List<Portfolio> getAllPortfolios() {
         log.debug("REST request to get all Portfolios");
-        return portfolioRepository.findAll();
+        return portfolioRepository.findByUserIsCurrentUser();
     }
 
     /**
@@ -90,9 +98,13 @@ public class PortfolioResource {
      * @return the ResponseEntity with status 200 (OK) and with body the portfolio, or with status 404 (Not Found)
      */
     @GetMapping("/portfolios/{id}")
-    public ResponseEntity<Portfolio> getPortfolio(@PathVariable Long id) {
+    public ResponseEntity<?> getPortfolio(@PathVariable Long id) {
         log.debug("REST request to get Portfolio : {}", id);
         Optional<Portfolio> portfolio = portfolioRepository.findById(id);
+        if (portfolio.isPresent() && portfolio.get().getUser() != null &&
+            !portfolio.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseUtil.wrapOrNotFound(portfolio);
     }
 
@@ -103,8 +115,13 @@ public class PortfolioResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/portfolios/{id}")
-    public ResponseEntity<Void> deletePortfolio(@PathVariable Long id) {
+    public ResponseEntity<?> deletePortfolio(@PathVariable Long id) {
         log.debug("REST request to delete Portfolio : {}", id);
+        Optional<Portfolio> portfolio = portfolioRepository.findById(id);
+        if (portfolio.isPresent() && portfolio.get().getUser() != null &&
+            !portfolio.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         portfolioRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
