@@ -30,8 +30,11 @@ public class PortfolioResource {
 
     private final PortfolioRepository portfolioRepository;
 
-    public PortfolioResource(PortfolioRepository portfolioRepository) {
+    private final UserRepository userRepository;
+
+    public PortfolioResource(PortfolioRepository portfolioRepository, UserRepository userRepository) {
         this.portfolioRepository = portfolioRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -46,6 +49,12 @@ public class PortfolioResource {
         log.debug("REST request to save Portfolio : {}", portfolio);
         if (portfolio.getId() != null) {
             throw new BadRequestAlertException("A new portfolio cannot already have an ID", ENTITY_NAME, "idexists");
+        }
+        if (portfolio.getUser() == null) {
+            if (SecurityUtils.getCurrentUserLogin().isPresent()) {
+                Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+                user.ifPresent(portfolio::setUser);
+            }
         }
         if (!portfolio.getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
