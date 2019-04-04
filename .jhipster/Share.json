@@ -21,6 +21,7 @@
             "relationshipType": "many-to-one",
             "otherEntityName": "portfolio",
             "otherEntityRelationshipName": "share",
+            "relationshipValidateRules": "required",
             "relationshipName": "portfolio",
             "otherEntityField": "id"
         }

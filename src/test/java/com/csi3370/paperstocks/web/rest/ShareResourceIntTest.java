@@ -3,6 +3,7 @@ package com.csi3370.paperstocks.web.rest;
 import com.csi3370.paperstocks.Csi3370App;
 
 import com.csi3370.paperstocks.domain.Share;
+import com.csi3370.paperstocks.domain.Portfolio;
 import com.csi3370.paperstocks.repository.ShareRepository;
 import com.csi3370.paperstocks.web.rest.errors.ExceptionTranslator;
 
@@ -90,6 +91,11 @@ public class ShareResourceIntTest {
         Share share = new Share()
             .ticker(DEFAULT_TICKER)
             .quantity(DEFAULT_QUANTITY);
+        // Add required entity
+        Portfolio portfolio = PortfolioResourceIntTest.createEntity(em);
+        em.persist(portfolio);
+        em.flush();
+        share.setPortfolio(portfolio);
         return share;
     }
 

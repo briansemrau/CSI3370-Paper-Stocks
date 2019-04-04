@@ -33,7 +33,8 @@ public class Share implements Serializable {
     @Column(name = "quantity", nullable = false)
     private Integer quantity;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
+    @NotNull
     @JsonIgnoreProperties("shares")
     private Portfolio portfolio;
 

@@ -9,7 +9,10 @@ entity Share {
 
 relationship ManyToOne {
     Portfolio{user(login)} to User
-	Share{portfolio} to Portfolio
+}
+
+relationship OneToMany {
+    Portfolio{share} to Share{portfolio(id) required}
 }
 
 entity Credit {
