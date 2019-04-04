@@ -3,6 +3,7 @@ package com.csi3370.paperstocks.web.rest;
 import com.csi3370.paperstocks.Csi3370App;
 
 import com.csi3370.paperstocks.domain.Portfolio;
+import com.csi3370.paperstocks.domain.User;
 import com.csi3370.paperstocks.repository.PortfolioRepository;
 import com.csi3370.paperstocks.web.rest.errors.ExceptionTranslator;
 
@@ -86,6 +87,11 @@ public class PortfolioResourceIntTest {
     public static Portfolio createEntity(EntityManager em) {
         Portfolio portfolio = new Portfolio()
             .name(DEFAULT_NAME);
+        // Add required entity
+        User user = UserResourceIntTest.createEntity(em);
+        em.persist(user);
+        em.flush();
+        portfolio.setUser(user);
         return portfolio;
     }
 

@@ -8,7 +8,7 @@ entity Share {
 }
 
 relationship ManyToOne {
-    Portfolio{user(login)} to User
+    Portfolio{user(login) required} to User
 }
 
 relationship OneToMany {
