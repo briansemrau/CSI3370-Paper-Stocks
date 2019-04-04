@@ -30,9 +30,10 @@ public class Portfolio implements Serializable {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "portfolio")
+    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Share> shares = new HashSet<>();
+
     @ManyToOne
     @JsonIgnoreProperties("portfolios")
     private User user;

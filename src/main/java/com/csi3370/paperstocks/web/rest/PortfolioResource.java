@@ -1,8 +1,9 @@
 package com.csi3370.paperstocks.web.rest;
-import com.csi3370.paperstocks.domain.Portfolio;
-import com.csi3370.paperstocks.repository.PortfolioRepository;
+import com.csi3370.paperstocks.domain.*;
+import com.csi3370.paperstocks.repository.*;
 import com.csi3370.paperstocks.security.SecurityUtils;
-import com.csi3370.paperstocks.web.rest.errors.BadRequestAlertException;
+import com.csi3370.paperstocks.service.mapper.UserMapper;
+import com.csi3370.paperstocks.web.rest.errors.*;
 import com.csi3370.paperstocks.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
@@ -121,6 +122,10 @@ public class PortfolioResource {
         if (portfolio.isPresent() && portfolio.get().getUser() != null &&
             !portfolio.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
+        if (portfolio.isPresent() &&
+            !portfolio.get().getShares().isEmpty()) {
+            throw new PortfolioNotEmptyException();
         }
         portfolioRepository.deleteById(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
