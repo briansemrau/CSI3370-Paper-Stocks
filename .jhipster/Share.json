@@ -18,9 +18,10 @@
     ],
     "relationships": [
         {
-            "relationshipName": "portfolio",
-            "otherEntityName": "portfolio",
             "relationshipType": "many-to-one",
+            "otherEntityName": "portfolio",
+            "otherEntityRelationshipName": "share",
+            "relationshipName": "portfolio",
             "otherEntityField": "id"
         }
     ],

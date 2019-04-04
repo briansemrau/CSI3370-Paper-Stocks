@@ -8,12 +8,6 @@
     ],
     "relationships": [
         {
-            "relationshipType": "one-to-many",
-            "otherEntityName": "share",
-            "otherEntityRelationshipName": "portfolio",
-            "relationshipName": "share"
-        },
-        {
             "relationshipType": "many-to-one",
             "otherEntityName": "user",
             "otherEntityRelationshipName": "portfolio",
@@ -24,7 +18,7 @@
     "changelogDate": "20190403192727",
     "entityTableName": "portfolio",
     "dto": "no",
-    "pagination": "infinite-scroll",
+    "pagination": "no",
     "service": "no",
     "jpaMetamodelFiltering": false,
     "fluentMethods": true,
