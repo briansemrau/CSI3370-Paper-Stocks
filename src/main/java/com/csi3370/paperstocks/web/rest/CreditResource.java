@@ -1,12 +1,15 @@
 package com.csi3370.paperstocks.web.rest;
-import com.csi3370.paperstocks.domain.Credit;
-import com.csi3370.paperstocks.repository.CreditRepository;
+
+import com.csi3370.paperstocks.domain.*;
+import com.csi3370.paperstocks.repository.*;
+import com.csi3370.paperstocks.security.*;
 import com.csi3370.paperstocks.web.rest.errors.BadRequestAlertException;
 import com.csi3370.paperstocks.web.rest.util.HeaderUtil;
 import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -36,10 +39,12 @@ public class CreditResource {
      * POST  /credits : Create a new credit.
      *
      * @param credit the credit to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new credit, or with status 400 (Bad Request) if the credit has already an ID
+     * @return the ResponseEntity with status 201 (Created) and with body the new credit, or with status 400 (Bad
+     * Request) if the credit has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/credits")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Credit> createCredit(@RequestBody Credit credit) throws URISyntaxException {
         log.debug("REST request to save Credit : {}", credit);
         if (credit.getId() != null) {
@@ -55,12 +60,13 @@ public class CreditResource {
      * PUT  /credits : Updates an existing credit.
      *
      * @param credit the credit to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated credit,
-     * or with status 400 (Bad Request) if the credit is not valid,
-     * or with status 500 (Internal Server Error) if the credit couldn't be updated
+     * @return the ResponseEntity with status 200 (OK) and with body the updated credit, or with status 400 (Bad
+     * Request) if the credit is not valid, or with status 500 (Internal Server Error) if the credit couldn't be
+     * updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/credits")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Credit> updateCredit(@RequestBody Credit credit) throws URISyntaxException {
         log.debug("REST request to update Credit : {}", credit);
         if (credit.getId() == null) {
@@ -78,6 +84,7 @@ public class CreditResource {
      * @return the ResponseEntity with status 200 (OK) and the list of credits in body
      */
     @GetMapping("/credits")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public List<Credit> getAllCredits() {
         log.debug("REST request to get all Credits");
         return creditRepository.findAll();
@@ -90,6 +97,7 @@ public class CreditResource {
      * @return the ResponseEntity with status 200 (OK) and with body the credit, or with status 404 (Not Found)
      */
     @GetMapping("/credits/{id}")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Credit> getCredit(@PathVariable Long id) {
         log.debug("REST request to get Credit : {}", id);
         Optional<Credit> credit = creditRepository.findById(id);
@@ -103,6 +111,7 @@ public class CreditResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/credits/{id}")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteCredit(@PathVariable Long id) {
         log.debug("REST request to delete Credit : {}", id);
         creditRepository.deleteById(id);
