@@ -2,10 +2,9 @@ package com.csi3370.paperstocks.web.rest;
 
 import com.csi3370.paperstocks.Csi3370App;
 
-import com.csi3370.paperstocks.domain.Portfolio;
-import com.csi3370.paperstocks.domain.User;
-import com.csi3370.paperstocks.repository.PortfolioRepository;
-import com.csi3370.paperstocks.service.PortfolioService;
+import com.csi3370.paperstocks.domain.*;
+import com.csi3370.paperstocks.repository.*;
+import com.csi3370.paperstocks.service.*;
 import com.csi3370.paperstocks.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -17,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.web.PageableHandlerMethodArgumentResolver;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -52,6 +52,15 @@ public class PortfolioResourceIntTest {
     private PortfolioService portfolioService;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ShareRepository shareRepository;
+
+    @Autowired
+    private ShareService shareService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -68,13 +77,22 @@ public class PortfolioResourceIntTest {
 
     private MockMvc restPortfolioMockMvc;
 
+    private MockMvc restShareMockMvc;
+
     private Portfolio portfolio;
 
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PortfolioResource portfolioResource = new PortfolioResource(portfolioService);
+        final PortfolioResource portfolioResource = new PortfolioResource(portfolioService, userRepository);
         this.restPortfolioMockMvc = MockMvcBuilders.standaloneSetup(portfolioResource)
+            .setCustomArgumentResolvers(pageableArgumentResolver)
+            .setControllerAdvice(exceptionTranslator)
+            .setConversionService(createFormattingConversionService())
+            .setMessageConverters(jacksonMessageConverter)
+            .setValidator(validator).build();
+        final ShareResource shareResource = new ShareResource(shareService);
+        this.restShareMockMvc = MockMvcBuilders.standaloneSetup(shareResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
             .setConversionService(createFormattingConversionService())
@@ -99,13 +117,30 @@ public class PortfolioResourceIntTest {
         return portfolio;
     }
 
+    /**
+     * Create an entity for this test.
+     *
+     * This is a static method, as tests for other entities might also need it,
+     * if they test an entity which requires the current entity.
+     */
+    public /*static*/ Portfolio createEntity(EntityManager em, User user) {
+        Portfolio portfolio = new Portfolio()
+            .name(DEFAULT_NAME);
+        // Add required entity
+        em.persist(user);
+        em.flush();
+        portfolio.setUser(user);
+        return portfolio;
+    }
+
     @Before
     public void initTest() {
-        portfolio = createEntity(em);
+        portfolio = createEntity(em, userRepository.findOneByLogin("user").get());
     }
 
     @Test
     @Transactional
+    @WithMockUser
     public void createPortfolio() throws Exception {
         int databaseSizeBeforeCreate = portfolioRepository.findAll().size();
 
@@ -143,6 +178,7 @@ public class PortfolioResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser
     public void getAllPortfolios() throws Exception {
         // Initialize the database
         portfolioRepository.saveAndFlush(portfolio);
@@ -157,6 +193,7 @@ public class PortfolioResourceIntTest {
     
     @Test
     @Transactional
+    @WithMockUser
     public void getPortfolio() throws Exception {
         // Initialize the database
         portfolioRepository.saveAndFlush(portfolio);
@@ -171,6 +208,7 @@ public class PortfolioResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser
     public void getNonExistingPortfolio() throws Exception {
         // Get the portfolio
         restPortfolioMockMvc.perform(get("/api/portfolios/{id}", Long.MAX_VALUE))
@@ -179,6 +217,7 @@ public class PortfolioResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser
     public void updatePortfolio() throws Exception {
         // Initialize the database
         portfolioService.save(portfolio);
@@ -206,6 +245,7 @@ public class PortfolioResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser
     public void updateNonExistingPortfolio() throws Exception {
         int databaseSizeBeforeUpdate = portfolioRepository.findAll().size();
 
@@ -224,6 +264,7 @@ public class PortfolioResourceIntTest {
 
     @Test
     @Transactional
+    @WithMockUser
     public void deletePortfolio() throws Exception {
         // Initialize the database
         portfolioService.save(portfolio);
@@ -237,6 +278,50 @@ public class PortfolioResourceIntTest {
 
         // Validate the database is empty
         List<Portfolio> portfolioList = portfolioRepository.findAll();
+        assertThat(portfolioList).hasSize(databaseSizeBeforeDelete - 1);
+    }
+
+    @Test
+    @Transactional
+    @WithMockUser
+    public void deletePortfolioWithShare() throws Exception {
+        // Initialize the database
+        portfolioService.save(portfolio);
+
+        Share share = ShareResourceIntTest.createEntity(em);
+        em.persist(share);
+        em.flush();
+        portfolio.addShare(share);
+
+        int databaseSizeBeforeDelete = portfolioRepository.findAll().size();
+
+        // Try to delete the portfolio
+        restPortfolioMockMvc.perform(delete("/api/portfolios/{id}", portfolio.getId())
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isBadRequest());
+
+        // Validate the database is not empty
+        List<Portfolio> portfolioList = portfolioRepository.findAll();
+        assertThat(portfolioList).hasSize(databaseSizeBeforeDelete);
+
+        int databaseSizeBeforeDeleteShare = shareRepository.findAll().size();
+
+        // Delete the share
+        restShareMockMvc.perform(delete("/api/shares/{id}", share.getId())
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
+
+        // Validate the database is empty
+        List<Share> shareList = shareRepository.findAll();
+        assertThat(shareList).hasSize(databaseSizeBeforeDeleteShare - 1);
+
+        // Delete the portfolio
+        restPortfolioMockMvc.perform(delete("/api/portfolios/{id}", portfolio.getId())
+            .accept(TestUtil.APPLICATION_JSON_UTF8))
+            .andExpect(status().isOk());
+
+        // Validate the database is empty
+        portfolioList = portfolioRepository.findAll();
         assertThat(portfolioList).hasSize(databaseSizeBeforeDelete - 1);
     }
 
