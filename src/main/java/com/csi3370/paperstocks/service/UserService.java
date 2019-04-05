@@ -1,10 +1,8 @@
 package com.csi3370.paperstocks.service;
 
 import com.csi3370.paperstocks.config.Constants;
-import com.csi3370.paperstocks.domain.Authority;
-import com.csi3370.paperstocks.domain.User;
-import com.csi3370.paperstocks.repository.AuthorityRepository;
-import com.csi3370.paperstocks.repository.UserRepository;
+import com.csi3370.paperstocks.domain.*;
+import com.csi3370.paperstocks.repository.*;
 import com.csi3370.paperstocks.security.AuthoritiesConstants;
 import com.csi3370.paperstocks.security.SecurityUtils;
 import com.csi3370.paperstocks.service.dto.UserDTO;
@@ -43,11 +41,14 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager) {
+    private final CreditRepository creditRepository;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, CreditRepository creditRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
+        this.creditRepository = creditRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -120,6 +121,13 @@ public class UserService {
         userRepository.save(newUser);
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
+
+        Credit credit = new Credit();
+        credit.setCredit(10000.0);
+        credit.setUser(newUser);
+        creditRepository.save(credit);
+        log.debug("Created Information for Credit: {}", credit);
+
         return newUser;
     }
 
@@ -161,6 +169,13 @@ public class UserService {
         userRepository.save(user);
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
+
+        Credit credit = new Credit();
+        credit.setCredit(10000.0);
+        credit.setUser(user);
+        creditRepository.save(credit);
+        log.debug("Created Information for Credit: {}", credit);
+
         return user;
     }
 

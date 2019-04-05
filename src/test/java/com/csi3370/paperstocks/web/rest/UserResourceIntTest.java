@@ -1,9 +1,8 @@
 package com.csi3370.paperstocks.web.rest;
 
 import com.csi3370.paperstocks.Csi3370App;
-import com.csi3370.paperstocks.domain.Authority;
-import com.csi3370.paperstocks.domain.User;
-import com.csi3370.paperstocks.repository.UserRepository;
+import com.csi3370.paperstocks.domain.*;
+import com.csi3370.paperstocks.repository.*;
 import com.csi3370.paperstocks.security.AuthoritiesConstants;
 import com.csi3370.paperstocks.service.MailService;
 import com.csi3370.paperstocks.service.UserService;
@@ -70,6 +69,9 @@ public class UserResourceIntTest {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private CreditRepository creditRepository;
 
     @Autowired
     private MailService mailService;
@@ -142,6 +144,7 @@ public class UserResourceIntTest {
     @Transactional
     public void createUser() throws Exception {
         int databaseSizeBeforeCreate = userRepository.findAll().size();
+        int databaseSizeBeforeCreateCredit = creditRepository.findAll().size();
 
         // Create the User
         ManagedUserVM managedUserVM = new ManagedUserVM();
@@ -170,6 +173,12 @@ public class UserResourceIntTest {
         assertThat(testUser.getEmail()).isEqualTo(DEFAULT_EMAIL);
         assertThat(testUser.getImageUrl()).isEqualTo(DEFAULT_IMAGEURL);
         assertThat(testUser.getLangKey()).isEqualTo(DEFAULT_LANGKEY);
+
+        // Validate the Credit in the database
+        List<Credit> creditList = creditRepository.findAll();
+        assertThat(creditList).hasSize(databaseSizeBeforeCreateCredit + 1);
+        Credit testCredit = creditList.get(creditList.size() - 1);
+        assertThat(testCredit.getCredit()).isEqualTo(10000.0);
     }
 
     @Test
