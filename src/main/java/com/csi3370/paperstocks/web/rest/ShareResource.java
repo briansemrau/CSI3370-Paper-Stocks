@@ -1,5 +1,6 @@
 package com.csi3370.paperstocks.web.rest;
 import com.csi3370.paperstocks.domain.Share;
+import com.csi3370.paperstocks.security.AuthoritiesConstants;
 import com.csi3370.paperstocks.service.ShareService;
 import com.csi3370.paperstocks.web.rest.errors.BadRequestAlertException;
 import com.csi3370.paperstocks.web.rest.util.HeaderUtil;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -46,6 +48,7 @@ public class ShareResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/shares")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Share> createShare(@Valid @RequestBody Share share) throws URISyntaxException {
         log.debug("REST request to save Share : {}", share);
         if (share.getId() != null) {
@@ -67,6 +70,7 @@ public class ShareResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/shares")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Share> updateShare(@Valid @RequestBody Share share) throws URISyntaxException {
         log.debug("REST request to update Share : {}", share);
         if (share.getId() == null) {
@@ -112,6 +116,7 @@ public class ShareResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/shares/{id}")
+    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
     public ResponseEntity<Void> deleteShare(@PathVariable Long id) {
         log.debug("REST request to delete Share : {}", id);
         shareService.delete(id);
