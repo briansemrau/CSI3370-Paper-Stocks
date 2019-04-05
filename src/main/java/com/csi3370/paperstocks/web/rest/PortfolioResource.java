@@ -48,7 +48,7 @@ public class PortfolioResource {
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/portfolios")
-    public ResponseEntity<?> createPortfolio(@Valid @RequestBody Portfolio portfolio) throws URISyntaxException {
+    public ResponseEntity<?> createPortfolio(@RequestBody Portfolio portfolio) throws URISyntaxException {
         log.debug("REST request to save Portfolio : {}", portfolio);
         if (portfolio.getId() != null) {
             throw new BadRequestAlertException("A new portfolio cannot already have an ID", ENTITY_NAME, "idexists");

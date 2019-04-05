@@ -39,6 +39,7 @@ relationship OneToOne {
 //}
 
 service Portfolio with serviceClass
+service Share with serviceClass
 
 // Set pagination options
 paginate Share//, Transaction

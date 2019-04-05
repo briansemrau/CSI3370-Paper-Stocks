@@ -1,6 +1,6 @@
 package com.csi3370.paperstocks.web.rest;
 import com.csi3370.paperstocks.domain.Share;
-import com.csi3370.paperstocks.repository.ShareRepository;
+import com.csi3370.paperstocks.service.ShareService;
 import com.csi3370.paperstocks.web.rest.errors.BadRequestAlertException;
 import com.csi3370.paperstocks.web.rest.util.HeaderUtil;
 import com.csi3370.paperstocks.web.rest.util.PaginationUtil;
@@ -32,10 +32,10 @@ public class ShareResource {
 
     private static final String ENTITY_NAME = "share";
 
-    private final ShareRepository shareRepository;
+    private final ShareService shareService;
 
-    public ShareResource(ShareRepository shareRepository) {
-        this.shareRepository = shareRepository;
+    public ShareResource(ShareService shareService) {
+        this.shareService = shareService;
     }
 
     /**
@@ -51,7 +51,7 @@ public class ShareResource {
         if (share.getId() != null) {
             throw new BadRequestAlertException("A new share cannot already have an ID", ENTITY_NAME, "idexists");
         }
-        Share result = shareRepository.save(share);
+        Share result = shareService.save(share);
         return ResponseEntity.created(new URI("/api/shares/" + result.getId()))
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
@@ -72,7 +72,7 @@ public class ShareResource {
         if (share.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");
         }
-        Share result = shareRepository.save(share);
+        Share result = shareService.save(share);
         return ResponseEntity.ok()
             .headers(HeaderUtil.createEntityUpdateAlert(ENTITY_NAME, share.getId().toString()))
             .body(result);
@@ -87,7 +87,7 @@ public class ShareResource {
     @GetMapping("/shares")
     public ResponseEntity<List<Share>> getAllShares(Pageable pageable) {
         log.debug("REST request to get a page of Shares");
-        Page<Share> page = shareRepository.findAll(pageable);
+        Page<Share> page = shareService.findAll(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/shares");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -101,7 +101,7 @@ public class ShareResource {
     @GetMapping("/shares/{id}")
     public ResponseEntity<Share> getShare(@PathVariable Long id) {
         log.debug("REST request to get Share : {}", id);
-        Optional<Share> share = shareRepository.findById(id);
+        Optional<Share> share = shareService.findOne(id);
         return ResponseUtil.wrapOrNotFound(share);
     }
 
@@ -114,7 +114,7 @@ public class ShareResource {
     @DeleteMapping("/shares/{id}")
     public ResponseEntity<Void> deleteShare(@PathVariable Long id) {
         log.debug("REST request to delete Share : {}", id);
-        shareRepository.deleteById(id);
+        shareService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 }

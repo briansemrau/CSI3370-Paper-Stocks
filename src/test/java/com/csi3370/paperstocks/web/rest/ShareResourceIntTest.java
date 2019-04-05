@@ -5,6 +5,7 @@ import com.csi3370.paperstocks.Csi3370App;
 import com.csi3370.paperstocks.domain.Share;
 import com.csi3370.paperstocks.domain.Portfolio;
 import com.csi3370.paperstocks.repository.ShareRepository;
+import com.csi3370.paperstocks.service.ShareService;
 import com.csi3370.paperstocks.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -51,6 +52,9 @@ public class ShareResourceIntTest {
     private ShareRepository shareRepository;
 
     @Autowired
+    private ShareService shareService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -72,7 +76,7 @@ public class ShareResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final ShareResource shareResource = new ShareResource(shareRepository);
+        final ShareResource shareResource = new ShareResource(shareService);
         this.restShareMockMvc = MockMvcBuilders.standaloneSetup(shareResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -220,7 +224,7 @@ public class ShareResourceIntTest {
     @Transactional
     public void updateShare() throws Exception {
         // Initialize the database
-        shareRepository.saveAndFlush(share);
+        shareService.save(share);
 
         int databaseSizeBeforeUpdate = shareRepository.findAll().size();
 
@@ -267,7 +271,7 @@ public class ShareResourceIntTest {
     @Transactional
     public void deleteShare() throws Exception {
         // Initialize the database
-        shareRepository.saveAndFlush(share);
+        shareService.save(share);
 
         int databaseSizeBeforeDelete = shareRepository.findAll().size();
 
