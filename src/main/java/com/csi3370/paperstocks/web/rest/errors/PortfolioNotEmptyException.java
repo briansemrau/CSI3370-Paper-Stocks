@@ -7,8 +7,7 @@ public class PortfolioNotEmptyException extends BadRequestAlertException {
     private static final long serialVersionUID = 1L;
 
     public PortfolioNotEmptyException() {
-        super("Can't delete a portfolio that still contains shares.\n" +
-            "Please sell all contained shares first.", "portfolio", "idnull");
+        super("Can't delete a portfolio that still contains shares.", "portfolio", "idnull");
     }
 
 }

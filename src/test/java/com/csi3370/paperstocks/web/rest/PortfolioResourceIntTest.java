@@ -5,6 +5,7 @@ import com.csi3370.paperstocks.Csi3370App;
 import com.csi3370.paperstocks.domain.Portfolio;
 import com.csi3370.paperstocks.domain.User;
 import com.csi3370.paperstocks.repository.PortfolioRepository;
+import com.csi3370.paperstocks.service.PortfolioService;
 import com.csi3370.paperstocks.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -48,6 +49,9 @@ public class PortfolioResourceIntTest {
     private PortfolioRepository portfolioRepository;
 
     @Autowired
+    private PortfolioService portfolioService;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -69,7 +73,7 @@ public class PortfolioResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final PortfolioResource portfolioResource = new PortfolioResource(portfolioRepository);
+        final PortfolioResource portfolioResource = new PortfolioResource(portfolioService);
         this.restPortfolioMockMvc = MockMvcBuilders.standaloneSetup(portfolioResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
@@ -177,7 +181,7 @@ public class PortfolioResourceIntTest {
     @Transactional
     public void updatePortfolio() throws Exception {
         // Initialize the database
-        portfolioRepository.saveAndFlush(portfolio);
+        portfolioService.save(portfolio);
 
         int databaseSizeBeforeUpdate = portfolioRepository.findAll().size();
 
@@ -222,7 +226,7 @@ public class PortfolioResourceIntTest {
     @Transactional
     public void deletePortfolio() throws Exception {
         // Initialize the database
-        portfolioRepository.saveAndFlush(portfolio);
+        portfolioService.save(portfolio);
 
         int databaseSizeBeforeDelete = portfolioRepository.findAll().size();
 

@@ -38,6 +38,8 @@ relationship OneToOne {
 //	Transaction{history} to History
 //}
 
+service Portfolio with serviceClass
+
 // Set pagination options
 paginate Share//, Transaction
 with infinite-scroll
