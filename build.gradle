@@ -166,14 +166,13 @@ repositories {
     mavenLocal()
     mavenCentral()
     jcenter()
-    maven { url "https://dl.bintray.com/patriques82/maven" } // AlphaVantage Java API
     //jhipster-needle-gradle-repositories - JHipster will add additional repositories
 }
 
 dependencies {
     // Use ", version: jhipster_dependencies_version, changing: true" if you want
     // to use a SNAPSHOT release instead of a stable release
-    compile 'org.patriques:alphavantage4j:1.4'
+    compile 'pl.zankowski:iextrading4j-all:2.3.0'
     compile group: "io.github.jhipster", name: "jhipster-framework"
     compile "org.springframework.boot:spring-boot-starter-cache"
     compile "io.dropwizard.metrics:metrics-core"
