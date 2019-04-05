@@ -43,12 +43,15 @@ public class UserService {
 
     private final CreditRepository creditRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, CreditRepository creditRepository) {
+    private final PortfolioRepository portfolioRepository;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, CreditRepository creditRepository, PortfolioRepository portfolioRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
         this.creditRepository = creditRepository;
+        this.portfolioRepository = portfolioRepository;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -128,6 +131,12 @@ public class UserService {
         creditRepository.save(credit);
         log.debug("Created Information for Credit: {}", credit);
 
+        Portfolio portfolio = new Portfolio();
+        portfolio.setName("My Portfolio");
+        portfolio.setUser(newUser);
+        portfolioRepository.save(portfolio);
+        log.debug("Created Information for Portfolio: {}", portfolio);
+
         return newUser;
     }
 
@@ -175,6 +184,12 @@ public class UserService {
         credit.setUser(user);
         creditRepository.save(credit);
         log.debug("Created Information for Credit: {}", credit);
+
+        Portfolio portfolio = new Portfolio();
+        portfolio.setName("My Portfolio");
+        portfolio.setUser(user);
+        portfolioRepository.save(portfolio);
+        log.debug("Created Information for Portfolio: {}", portfolio);
 
         return user;
     }
