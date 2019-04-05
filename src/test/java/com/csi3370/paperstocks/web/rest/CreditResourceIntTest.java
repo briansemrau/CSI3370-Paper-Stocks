@@ -3,7 +3,7 @@ package com.csi3370.paperstocks.web.rest;
 import com.csi3370.paperstocks.Csi3370App;
 
 import com.csi3370.paperstocks.domain.Credit;
-import com.csi3370.paperstocks.repository.CreditRepository;
+import com.csi3370.paperstocks.repository.*;
 import com.csi3370.paperstocks.web.rest.errors.ExceptionTranslator;
 
 import org.junit.Before;
@@ -47,6 +47,9 @@ public class CreditResourceIntTest {
     private CreditRepository creditRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private MappingJackson2HttpMessageConverter jacksonMessageConverter;
 
     @Autowired
@@ -68,7 +71,7 @@ public class CreditResourceIntTest {
     @Before
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        final CreditResource creditResource = new CreditResource(creditRepository);
+        final CreditResource creditResource = new CreditResource(creditRepository, userRepository);
         this.restCreditMockMvc = MockMvcBuilders.standaloneSetup(creditResource)
             .setCustomArgumentResolvers(pageableArgumentResolver)
             .setControllerAdvice(exceptionTranslator)
