@@ -7,12 +7,20 @@ entity Share {
     quantity Integer required
 }
 
+entity Transaction {
+    ticker String required
+    quantity Integer required
+    pricePerShare Double required
+    date Instant required
+}
+
 relationship ManyToOne {
     Portfolio{user(login) required} to User
 }
 
 relationship OneToMany {
     Portfolio{share} to Share{portfolio(id) required}
+    Portfolio{transaction} to Transaction{portfolio(id) required}
 }
 
 entity Credit {
@@ -23,24 +31,9 @@ relationship OneToOne {
 	Credit{user(login) required} to User
 }
 
-//entity History
-//
-//entity Transaction {
-//	ticker String required
-//    quantity Integer required
-//}
-//
-//relationship OneToOne {
-//    History{user(login) required} to User
-//}
-//
-//relationship OneToMany {
-//	History{transaction} to Transaction{history(id) required}
-//}
-
 service Portfolio with serviceClass
 service Share with serviceClass
 
 // Set pagination options
-paginate Share//, Transaction
+paginate Share, Transaction
 with infinite-scroll
