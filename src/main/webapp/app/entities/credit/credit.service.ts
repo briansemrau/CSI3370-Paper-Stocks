@@ -32,6 +32,10 @@ export class CreditService {
         return this.http.get<ICredit[]>(this.resourceUrl, { params: options, observe: 'response' });
     }
 
+    userCredit(): Observable<EntityResponseType> {
+        return this.http.get<ICredit>(`${this.resourceUrl}/mycredit`, { observe: 'response' });
+    }
+
     delete(id: number): Observable<HttpResponse<any>> {
         return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }

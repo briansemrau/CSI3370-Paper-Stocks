@@ -31,8 +31,11 @@ public class CreditResource {
 
     private final CreditRepository creditRepository;
 
-    public CreditResource(CreditRepository creditRepository) {
+    private final UserRepository userRepository;
+
+    public CreditResource(CreditRepository creditRepository, UserRepository userRepository) {
         this.creditRepository = creditRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -102,6 +105,19 @@ public class CreditResource {
         log.debug("REST request to get Credit : {}", id);
         Optional<Credit> credit = creditRepository.findById(id);
         return ResponseUtil.wrapOrNotFound(credit);
+    }
+
+    @GetMapping("/credits/mycredit")
+    public ResponseEntity<Credit> getCredit() {
+        log.debug("REST request to get User Credit");
+        if (SecurityUtils.getCurrentUserLogin().isPresent()) {
+            Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+            if (user.isPresent()) {
+                Optional<Credit> credit = creditRepository.findById(user.get().getId());
+                return ResponseUtil.wrapOrNotFound(credit);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     /**
