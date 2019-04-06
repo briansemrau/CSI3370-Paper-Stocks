@@ -34,6 +34,10 @@ public class Portfolio implements Serializable {
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
     //@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Share> shares = new HashSet<>();
+    
+    @OneToMany(mappedBy = "portfolio")
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    private Set<Transaction> transactions = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
@@ -85,6 +89,31 @@ public class Portfolio implements Serializable {
 
     public void setShares(Set<Share> shares) {
         this.shares = shares;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public Portfolio transactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
+        return this;
+    }
+
+    public Portfolio addTransaction(Transaction transaction) {
+        this.transactions.add(transaction);
+        transaction.setPortfolio(this);
+        return this;
+    }
+
+    public Portfolio removeTransaction(Transaction transaction) {
+        this.transactions.remove(transaction);
+        transaction.setPortfolio(null);
+        return this;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
     }
 
     public User getUser() {

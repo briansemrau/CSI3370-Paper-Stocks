@@ -1,0 +1,52 @@
+{
+    "name": "Transaction",
+    "fields": [
+        {
+            "fieldName": "ticker",
+            "fieldType": "String",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "quantity",
+            "fieldType": "Integer",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "pricePerShare",
+            "fieldType": "Double",
+            "fieldValidateRules": [
+                "required"
+            ]
+        },
+        {
+            "fieldName": "date",
+            "fieldType": "Instant",
+            "fieldValidateRules": [
+                "required"
+            ]
+        }
+    ],
+    "relationships": [
+        {
+            "relationshipType": "many-to-one",
+            "otherEntityName": "portfolio",
+            "otherEntityRelationshipName": "transaction",
+            "relationshipValidateRules": "required",
+            "relationshipName": "portfolio",
+            "otherEntityField": "id"
+        }
+    ],
+    "changelogDate": "20190406230758",
+    "entityTableName": "transaction",
+    "dto": "no",
+    "pagination": "infinite-scroll",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "clientRootFolder": "",
+    "applications": "*"
+}

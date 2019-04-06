@@ -1,0 +1,45 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="transaction">
+            <h2><span>Transaction</span> {{transaction.id}}</h2>
+            <hr>
+            <jhi-alert-error></jhi-alert-error>
+            <dl class="row-md jh-entity-details">
+                <dt><span>Ticker</span></dt>
+                <dd>
+                    <span>{{transaction.ticker}}</span>
+                </dd>
+                <dt><span>Quantity</span></dt>
+                <dd>
+                    <span>{{transaction.quantity}}</span>
+                </dd>
+                <dt><span>Price Per Share</span></dt>
+                <dd>
+                    <span>{{transaction.pricePerShare}}</span>
+                </dd>
+                <dt><span>Date</span></dt>
+                <dd>
+                    <span>{{transaction.date}}</span>
+                </dd>
+                <dt><span>Portfolio</span></dt>
+                <dd>
+                    <div *ngIf="transaction.portfolio">
+                        <a [routerLink]="['/portfolio', transaction.portfolio?.id, 'view']">{{transaction.portfolio?.id}}</a>
+                    </div>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon [icon]="'arrow-left'"></fa-icon>&nbsp;<span> Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/transaction', transaction.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon [icon]="'pencil-alt'"></fa-icon>&nbsp;<span> Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

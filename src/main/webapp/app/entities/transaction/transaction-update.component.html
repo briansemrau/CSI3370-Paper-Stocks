@@ -1,0 +1,95 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" #editForm="ngForm">
+            <h2 id="jhi-transaction-heading">Create or edit a Transaction</h2>
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+                <div class="form-group" [hidden]="!transaction.id">
+                    <label for="id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id"
+                        [(ngModel)]="transaction.id" readonly />
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_ticker">Ticker</label>
+                    <input type="text" class="form-control" name="ticker" id="field_ticker"
+                        [(ngModel)]="transaction.ticker" required/>
+                    <div [hidden]="!(editForm.controls.ticker?.dirty && editForm.controls.ticker?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.ticker?.errors?.required">
+                        This field is required.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_quantity">Quantity</label>
+                    <input type="number" class="form-control" name="quantity" id="field_quantity"
+                        [(ngModel)]="transaction.quantity" required/>
+                    <div [hidden]="!(editForm.controls.quantity?.dirty && editForm.controls.quantity?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.quantity?.errors?.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.quantity?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_pricePerShare">Price Per Share</label>
+                    <input type="number" class="form-control" name="pricePerShare" id="field_pricePerShare"
+                        [(ngModel)]="transaction.pricePerShare" required/>
+                    <div [hidden]="!(editForm.controls.pricePerShare?.dirty && editForm.controls.pricePerShare?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.pricePerShare?.errors?.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.pricePerShare?.errors?.number">
+                            This field should be a number.
+                        </small>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-control-label" for="field_date">Date</label>
+                    <div class="d-flex">
+                        <input id="field_date" type="datetime-local" class="form-control" name="date" [(ngModel)]="date" placeholder="YYYY-MM-DD HH:mm"
+                        required/>
+                    </div>
+                    <div [hidden]="!(editForm.controls.date?.dirty && editForm.controls.date?.invalid)">
+                        <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.date?.errors?.required">
+                        This field is required.
+                        </small>
+                        <small class="form-text text-danger"
+                            [hidden]="!editForm.controls.date?.errors?.ZonedDateTimelocal">
+                            This field should be a date and time.
+                        </small>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" for="field_portfolio">Portfolio</label>
+                    <select class="form-control" id="field_portfolio" name="portfolio" [(ngModel)]="transaction.portfolio"  required>
+                        <option *ngIf="!editForm.value.portfolio" [ngValue]="null" selected></option>
+                        <option [ngValue]="portfolioOption.id === transaction.portfolio?.id ? transaction.portfolio : portfolioOption" *ngFor="let portfolioOption of portfolios; trackBy: trackPortfolioById">{{portfolioOption.id}}</option>
+                    </select>
+                </div>
+                <div [hidden]="!(editForm.controls.portfolio?.dirty && editForm.controls.portfolio?.invalid)">
+                    <small class="form-text text-danger"
+                        [hidden]="!editForm.controls.portfolio?.errors?.required">
+                        This field is required.
+                    </small>
+                </div>
+            </div>
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary"  (click)="previousState()">
+                    <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span>Cancel</span>
+                </button>
+                <button type="submit" id="save-entity" [disabled]="editForm.form.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon [icon]="'save'"></fa-icon>&nbsp;<span>Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
