@@ -20,7 +20,7 @@ entity Credit {
 }
 
 relationship OneToOne {
-	Credit{user(login)} to User
+	Credit{user(login) required} to User
 }
 
 //entity History
@@ -31,11 +31,11 @@ relationship OneToOne {
 //}
 //
 //relationship OneToOne {
-//    History{user(login)} to User
+//    History{user(login) required} to User
 //}
 //
-//relationship ManyToOne {
-//	Transaction{history} to History
+//relationship OneToMany {
+//	History{transaction} to Transaction{history(id) required}
 //}
 
 service Portfolio with serviceClass

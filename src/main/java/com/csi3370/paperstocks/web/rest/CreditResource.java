@@ -12,6 +12,7 @@ import org.springframework.http.*;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -48,7 +49,7 @@ public class CreditResource {
      */
     @PostMapping("/credits")
     @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Credit> createCredit(@RequestBody Credit credit) throws URISyntaxException {
+    public ResponseEntity<Credit> createCredit(@Valid @RequestBody Credit credit) throws URISyntaxException {
         log.debug("REST request to save Credit : {}", credit);
         if (credit.getId() != null) {
             throw new BadRequestAlertException("A new credit cannot already have an ID", ENTITY_NAME, "idexists");
@@ -70,7 +71,7 @@ public class CreditResource {
      */
     @PutMapping("/credits")
     @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Credit> updateCredit(@RequestBody Credit credit) throws URISyntaxException {
+    public ResponseEntity<Credit> updateCredit(@Valid @RequestBody Credit credit) throws URISyntaxException {
         log.debug("REST request to update Credit : {}", credit);
         if (credit.getId() == null) {
             throw new BadRequestAlertException("Invalid id", ENTITY_NAME, "idnull");

@@ -32,7 +32,7 @@ public class Portfolio implements Serializable {
     private String name;
 
     @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    //@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     private Set<Share> shares = new HashSet<>();
 
     @ManyToOne(optional = false)
