@@ -12,4 +12,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
+
+    @Query("select portfolio from Portfolio portfolio where portfolio.user.login = ?#{principal.username}")
+    List<Transaction> findByUserIsCurrentUser();
 }
