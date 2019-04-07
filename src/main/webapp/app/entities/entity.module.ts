@@ -15,6 +15,10 @@ import { RouterModule } from '@angular/router';
             {
                 path: 'credit',
                 loadChildren: './credit/credit.module#Csi3370CreditModule'
+            },
+            {
+                path: 'transaction',
+                loadChildren: './transaction/transaction.module#Csi3370TransactionModule'
             }
             /* jhipster-needle-add-entity-route - JHipster will add entity modules routes here */
         ])
