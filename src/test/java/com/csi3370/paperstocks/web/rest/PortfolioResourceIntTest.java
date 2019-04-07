@@ -288,9 +288,11 @@ public class PortfolioResourceIntTest {
         // Initialize the database
         portfolioService.save(portfolio);
 
-        Share share = ShareResourceIntTest.createEntity(em);
-        em.persist(share);
-        em.flush();
+        Share share = new Share()
+            .ticker("AAAAAAAAAA")
+            .quantity(10)
+            .portfolio(portfolio);
+        shareService.save(share);
 
         int databaseSizeBeforeDelete = portfolioRepository.findAll().size();
 
