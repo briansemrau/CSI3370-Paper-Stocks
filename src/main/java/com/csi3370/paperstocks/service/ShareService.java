@@ -108,9 +108,8 @@ public class ShareService {
     private void clearShareCache(Share share) {
         //Objects.requireNonNull(cacheManager.getCache(Portfolio.class.getName() + ".shares")).evict(share);
     }
-    @Transactional
-    private void buyShare(Share share)
-    {
+
+    private void buyShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
         double price = lastTrade.getPrice().doubleValue();
@@ -131,15 +130,21 @@ public class ShareService {
 
 
                     creditRepository.save(myCredit.get());
-                    shareRepository.save(share);
+
+                    Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
+                    if (existingShare.isPresent()) {
+                        existingShare.get().setQuantity(existingShare.get().getQuantity() + share.getQuantity());
+                        shareRepository.save(existingShare.get());
+                    } else {
+                        shareRepository.save(share);
+                    }
                 }
             }
         }
 
     }
 
-    private void sellShare(Share share)
-    {
+    private void sellShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
         double price = lastTrade.getPrice().doubleValue();
@@ -157,6 +162,21 @@ public class ShareService {
 
                     myCredit.get().setCredit(newValue);
 
+                    Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
+                    if (existingShare.isPresent()) {
+                        existingShare.get().setQuantity(existingShare.get().getQuantity() - share.getQuantity());
+                        shareRepository.save(existingShare.get());
+                        if(existingShare.get().getQuantity()==0)
+                        {
+                            shareRepository.delete(share);
+                        }
+                        else{
+
+                        }
+                    } else {
+                        shareRepository.save(share);
+                    }
+
 
                     creditRepository.save(myCredit.get());
                     shareRepository.save(share);
@@ -167,5 +187,5 @@ public class ShareService {
     }
 
 
-    }
+}
 

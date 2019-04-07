@@ -130,4 +130,15 @@ public class ShareResource {
             .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
             .body(result);
     }
+
+    @PostMapping("/shares/sell")
+    public ResponseEntity<Share> sellShare(@Valid @RequestBody Share share) throws URISyntaxException {
+        log.debug("REST request to buy Share : {}", share);
+        Share result = shareService.save(share);
+        return ResponseEntity.created(new URI("/api/shares/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
+
+
 }
