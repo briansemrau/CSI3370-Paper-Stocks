@@ -1,9 +1,18 @@
 package com.csi3370.paperstocks.service;
 
 import com.csi3370.paperstocks.domain.*;
+import com.csi3370.paperstocks.repository.CreditRepository;
 import com.csi3370.paperstocks.repository.ShareRepository;
+import com.csi3370.paperstocks.repository.UserRepository;
+import com.csi3370.paperstocks.security.SecurityUtils;
+import com.csi3370.paperstocks.web.rest.CreditResource;
+import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import org.springframework.http.ResponseEntity;
+import pl.zankowski.iextrading4j.api.marketdata.LastTrade;
+
 
 import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
@@ -12,6 +21,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+import static com.csi3370.paperstocks.domain.Credit_.credit;
 
 /**
  * Service Implementation for managing Share.
@@ -24,11 +35,23 @@ public class ShareService {
 
     private final ShareRepository shareRepository;
 
+    private final StockDataService stockDataService;
+
+    private final UserRepository userRepository;
+
+    private final CreditRepository creditRepository;
+
     private final CacheManager cacheManager;
 
-    public ShareService(ShareRepository shareRepository, CacheManager cacheManager) {
+    private final CreditResource creditResource;
+
+    public ShareService(ShareRepository shareRepository, CacheManager cacheManager, StockDataService stockDataService, CreditResource creditResource, UserRepository userRepository, CreditRepository creditRepository) {
         this.shareRepository = shareRepository;
         this.cacheManager = cacheManager;
+        this.stockDataService = stockDataService;
+        this.creditResource = creditResource;
+        this.userRepository = userRepository;
+        this.creditRepository = creditRepository;
     }
 
     /**
@@ -85,5 +108,64 @@ public class ShareService {
     private void clearShareCache(Share share) {
         //Objects.requireNonNull(cacheManager.getCache(Portfolio.class.getName() + ".shares")).evict(share);
     }
+    @Transactional
+    private void buyShare(Share share)
+    {
+        LastTrade lastTrade;
+        lastTrade = stockDataService.getLastTrade(share.getTicker());
+        double price = lastTrade.getPrice().doubleValue();
+        double numShares = share.getQuantity();
+        log.debug("Request to buy Share : {}", share);
 
-}
+        //reduce the users credit
+
+        // get users credit
+        if (SecurityUtils.getCurrentUserLogin().isPresent()) {
+            Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+            if (user.isPresent()) {
+                Optional<Credit> myCredit = creditRepository.findById(user.get().getId());
+                if (myCredit.isPresent()) {
+                    double myValue = myCredit.get().getCredit();
+                    double newValue = myValue - (price * numShares);
+                    myCredit.get().setCredit(newValue);
+
+
+                    creditRepository.save(myCredit.get());
+                    shareRepository.save(share);
+                }
+            }
+        }
+
+    }
+
+    private void sellShare(Share share)
+    {
+        LastTrade lastTrade;
+        lastTrade = stockDataService.getLastTrade(share.getTicker());
+        double price = lastTrade.getPrice().doubleValue();
+        double numShares = share.getQuantity();
+        log.debug("Request to buy Share : {}", share);
+
+
+        if (SecurityUtils.getCurrentUserLogin().isPresent()) {
+            Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
+            if (user.isPresent()) {
+                Optional<Credit> myCredit = creditRepository.findById(user.get().getId());
+                if (myCredit.isPresent()) {
+                    double myValue = myCredit.get().getCredit();
+                    double newValue = myValue + (price * numShares);
+
+                    myCredit.get().setCredit(newValue);
+
+
+                    creditRepository.save(myCredit.get());
+                    shareRepository.save(share);
+                }
+            }
+        }
+
+    }
+
+
+    }
+

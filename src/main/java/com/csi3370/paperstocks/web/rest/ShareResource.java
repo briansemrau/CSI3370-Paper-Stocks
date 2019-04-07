@@ -122,4 +122,12 @@ public class ShareResource {
         shareService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+    @PostMapping("/shares/buy")
+    public ResponseEntity<Share> buyShare(@Valid @RequestBody Share share) throws URISyntaxException {
+        log.debug("REST request to buy Share : {}", share);
+        Share result = shareService.save(share);
+        return ResponseEntity.created(new URI("/api/shares/" + result.getId()))
+            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
+            .body(result);
+    }
 }
