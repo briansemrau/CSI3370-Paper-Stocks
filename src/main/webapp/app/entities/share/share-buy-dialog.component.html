@@ -1,0 +1,21 @@
+
+<!--Copy of share-delete-dialog right now. -->
+<form name="buyForm" (ngSubmit)="confirmBuy(share.id)">
+    <div class="modal-header">
+        <h4 class="modal-title">Confirm Buy operation</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"
+                (click)="clear()">&times;</button>
+    </div>
+    <div class="modal-body">
+        <jhi-alert-error></jhi-alert-error>
+        <p id="jhi-delete-share-heading">Are you sure you want to buy this Share?</p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="clear()">
+            <fa-icon [icon]="'ban'"></fa-icon>&nbsp;<span>Cancel</span>
+        </button>
+        <button id="jhi-confirm-delete-share" type="submit" class="btn btn-danger">
+            <fa-icon [icon]="'times'"></fa-icon>&nbsp;<span>Delete</span>
+        </button>
+    </div>
+</form>

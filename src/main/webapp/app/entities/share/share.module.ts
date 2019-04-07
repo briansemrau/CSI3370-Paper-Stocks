@@ -9,14 +9,24 @@ import {
     ShareDeletePopupComponent,
     ShareDeleteDialogComponent,
     shareRoute,
-    sharePopupRoute
+    sharePopupRoute,
+    ShareBuyPopupComponent,
+    ShareBuyDialogComponent
 } from './';
 
 const ENTITY_STATES = [...shareRoute, ...sharePopupRoute];
 
 @NgModule({
     imports: [Csi3370SharedModule, RouterModule.forChild(ENTITY_STATES)],
-    declarations: [ShareComponent, ShareDetailComponent, ShareUpdateComponent, ShareDeleteDialogComponent, ShareDeletePopupComponent],
+    declarations: [
+        ShareComponent,
+        ShareDetailComponent,
+        ShareUpdateComponent,
+        ShareDeleteDialogComponent,
+        ShareDeletePopupComponent,
+        ShareBuyPopupComponent,
+        ShareBuyDialogComponent
+    ],
     entryComponents: [ShareComponent, ShareUpdateComponent, ShareDeleteDialogComponent, ShareDeletePopupComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
