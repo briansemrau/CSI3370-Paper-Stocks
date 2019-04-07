@@ -24,11 +24,11 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
 
-    private final CacheManager cacheManager;
+    private final ShareRepository shareRepository;
 
-    public PortfolioService(PortfolioRepository portfolioRepository, CacheManager cacheManager) {
+    public PortfolioService(PortfolioRepository portfolioRepository, ShareRepository shareRepository) {
         this.portfolioRepository = portfolioRepository;
-        this.cacheManager = cacheManager;
+        this.shareRepository = shareRepository;
     }
 
     /**
@@ -85,7 +85,7 @@ public class PortfolioService {
         log.debug("Request to delete Portfolio : {}", id);
         Optional<Portfolio> portfolio = portfolioRepository.findById(id);
         if (portfolio.isPresent() &&
-            !portfolio.get().getShares().isEmpty()) {
+            shareRepository.findAllByPortfolio(portfolio.get()).size() > 0) {
             throw new PortfolioNotEmptyException();
         }
         portfolioRepository.deleteById(id);

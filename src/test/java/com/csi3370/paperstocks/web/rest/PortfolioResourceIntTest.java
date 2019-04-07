@@ -291,7 +291,6 @@ public class PortfolioResourceIntTest {
         Share share = ShareResourceIntTest.createEntity(em);
         em.persist(share);
         em.flush();
-        portfolio.addShare(share);
 
         int databaseSizeBeforeDelete = portfolioRepository.findAll().size();
 

@@ -16,11 +16,8 @@ entity Transaction {
 
 relationship ManyToOne {
     Portfolio{user(login) required} to User
-}
-
-relationship OneToMany {
-    Portfolio{share} to Share{portfolio(id) required}
-    Portfolio{transaction} to Transaction{portfolio(id) required}
+    Share{portfolio(id) required} to Portfolio
+    Transaction{portfolio(id) required} to Portfolio
 }
 
 entity Credit {

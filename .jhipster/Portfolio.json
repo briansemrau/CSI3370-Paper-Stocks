@@ -8,18 +8,6 @@
     ],
     "relationships": [
         {
-            "relationshipType": "one-to-many",
-            "otherEntityName": "share",
-            "otherEntityRelationshipName": "portfolio",
-            "relationshipName": "share"
-        },
-        {
-            "relationshipType": "one-to-many",
-            "otherEntityName": "transaction",
-            "otherEntityRelationshipName": "portfolio",
-            "relationshipName": "transaction"
-        },
-        {
             "relationshipType": "many-to-one",
             "otherEntityName": "user",
             "otherEntityRelationshipName": "portfolio",
