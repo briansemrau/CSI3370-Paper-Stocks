@@ -35,6 +35,16 @@ public final class HeaderUtil {
         return createAlert("A " + entityName + " is deleted with identifier " + param, param);
     }
 
+    public static HttpHeaders createEntityBuyAlert(String entityName, String param)
+    {
+        return createAlert("A " + entityName + " was bought with identifier" + param, param);
+    }
+
+    public static HttpHeaders createEntitySellAlert(String entityName,String param)
+    {
+        return createAlert("A " + entityName + " was sold with identifier" + param, param);
+    }
+
     public static HttpHeaders createFailureAlert(String entityName, String errorKey, String defaultMessage) {
         log.error("Entity processing failed, {}", defaultMessage);
         HttpHeaders headers = new HttpHeaders();

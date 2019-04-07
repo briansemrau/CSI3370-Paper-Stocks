@@ -125,20 +125,18 @@ public class ShareResource {
     @PostMapping("/shares/buy")
     public ResponseEntity<Share> buyShare(@Valid @RequestBody Share share) throws URISyntaxException {
         log.debug("REST request to buy Share : {}", share);
-        Share result = shareService.save(share);
-        return ResponseEntity.created(new URI("/api/shares/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
+        shareService.buyShare(share);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntityBuyAlert(ENTITY_NAME, share.getId().toString())).build();
+
     }
 
     @PostMapping("/shares/sell")
-    public ResponseEntity<Share> sellShare(@Valid @RequestBody Share share) throws URISyntaxException {
-        log.debug("REST request to buy Share : {}", share);
-        Share result = shareService.save(share);
-        return ResponseEntity.created(new URI("/api/shares/" + result.getId()))
-            .headers(HeaderUtil.createEntityCreationAlert(ENTITY_NAME, result.getId().toString()))
-            .body(result);
-    }
+    public ResponseEntity<Void> sellShare(@Valid @RequestBody Share share) throws URISyntaxException {
+        log.debug("REST request to sell Share : {}", share);
+        shareService.sellShare(share);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntitySellAlert(ENTITY_NAME, share.getId().toString())).build();
+
+        }
 
 
 }
