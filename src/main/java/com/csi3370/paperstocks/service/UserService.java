@@ -324,6 +324,6 @@ public class UserService {
 
     private void deleteChildren(User user) {
         portfolioRepository.findByUser(user).forEach(portfolio -> portfolioService.delete(portfolio.getId()));
-        creditRepository.deleteById(user.getId());
+        creditRepository.findById(user.getId()).ifPresent(creditRepository::delete);
     }
 }
