@@ -3,26 +3,22 @@ package com.csi3370.paperstocks.service;
 import com.csi3370.paperstocks.domain.*;
 import com.csi3370.paperstocks.repository.CreditRepository;
 import com.csi3370.paperstocks.repository.ShareRepository;
+import com.csi3370.paperstocks.repository.TransactionRepository;
 import com.csi3370.paperstocks.repository.UserRepository;
 import com.csi3370.paperstocks.security.SecurityUtils;
-import com.csi3370.paperstocks.web.rest.CreditResource;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.http.ResponseEntity;
 import pl.zankowski.iextrading4j.api.marketdata.LastTrade;
 
 
-import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.*;
-
-import static com.csi3370.paperstocks.domain.Credit_.credit;
 
 /**
  * Service Implementation for managing Share.
@@ -41,11 +37,14 @@ public class ShareService {
 
     private final CreditRepository creditRepository;
 
-    public ShareService(ShareRepository shareRepository, StockDataService stockDataService, UserRepository userRepository, CreditRepository creditRepository) {
+    private final TransactionRepository transactionRepository;
+
+    public ShareService(ShareRepository shareRepository, StockDataService stockDataService, UserRepository userRepository, CreditRepository creditRepository, TransactionRepository transactionRepository) {
         this.shareRepository = shareRepository;
         this.stockDataService = stockDataService;
         this.userRepository = userRepository;
         this.creditRepository = creditRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     /**
@@ -116,8 +115,17 @@ public class ShareService {
                     double newValue = myValue - (price * numShares);
                     myCredit.get().setCredit(newValue);
 
-
                     creditRepository.save(myCredit.get());
+
+                    //gets the current time for the Transaction
+                    Instant now = Instant.now();
+
+                    //crafts the Transaction to submit to the repository
+                    Transaction newTransaction = new Transaction().pricePerShare(price).date(now)
+                        .portfolio(share.getPortfolio()).quantity(share.getQuantity()).ticker(share.getTicker());
+
+                    //sumbits the transaction to the transaction repository
+                    transactionRepository.save(newTransaction);
 
                     Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
                     if (existingShare.isPresent()) {
@@ -138,6 +146,8 @@ public class ShareService {
         double price = lastTrade.getPrice().doubleValue();
         double numShares = share.getQuantity();
         log.debug("Request to buy Share : {}", share);
+        //gets the current time
+        Instant now = Instant.now();
 
 
         if (SecurityUtils.getCurrentUserLogin().isPresent()) {
@@ -150,6 +160,13 @@ public class ShareService {
 
                     myCredit.get().setCredit(newValue);
 
+                    //crafts the Transaction to submit to the repository
+                    Transaction newTransaction = new Transaction().pricePerShare(price).date(now).portfolio(share.getPortfolio())
+                        .quantity(share.getQuantity()).ticker(share.getTicker());
+
+                    //sumbits the transaction to the transaction repository
+                    transactionRepository.save(newTransaction);
+
                     Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
                     if (existingShare.isPresent()) {
                         existingShare.get().setQuantity(existingShare.get().getQuantity() - share.getQuantity());
@@ -157,6 +174,7 @@ public class ShareService {
                         if(existingShare.get().getQuantity()==0)
                         {
                             shareRepository.delete(share);
+
                         }
                         else{
 
