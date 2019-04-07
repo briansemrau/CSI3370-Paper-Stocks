@@ -35,4 +35,11 @@ export class ShareService {
     delete(id: number): Observable<HttpResponse<any>> {
         return this.http.delete<any>(`${this.resourceUrl}/${id}`, { observe: 'response' });
     }
+
+    buy(share: IShare): Observable<EntityResponseType> {
+        return this.http.post<IShare>(this.resourceUrl, share, { observe: 'response' });
+    }
+    sell(share: IShare): Observable<EntityResponseType> {
+        return this.http.post<IShare>(this.resourceUrl, share, { observe: 'response' });
+    }
 }

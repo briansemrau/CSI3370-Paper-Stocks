@@ -3,6 +3,7 @@ package com.csi3370.paperstocks.domain;
 
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.http.ResponseEntity;
 
 import javax.persistence.*;
 
@@ -23,7 +24,7 @@ public class Credit implements Serializable {
     private Long id;
 
     @Column(name = "credit")
-    private Double credit;
+    private double credit;
 
     @OneToOne
     @JoinColumn(unique = true)
@@ -39,7 +40,7 @@ public class Credit implements Serializable {
         this.id = id;
     }
 
-    public Double getCredit() {
+    public double getCredit() {
         return credit;
     }
 
