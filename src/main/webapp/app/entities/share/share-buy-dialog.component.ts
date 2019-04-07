@@ -21,13 +21,13 @@ export class ShareBuyDialogComponent {
     }
 
     confirmBuy(id: number) {
-        this.shareService.buy(id).subscribe(response => {
-            this.eventManager.broadcast({
-                name: 'shareListModification',
-                content: 'Shares have been bought'
-            });
-            this.activeModal.dismiss(true);
-        });
+        // this.shareService.buy(id).subscribe(response => {
+        //     this.eventManager.broadcast({
+        //         name: 'shareListModification',
+        //         content: 'Shares have been bought'
+        //     });
+        //     this.activeModal.dismiss(true);
+        // });
     }
 }
 
