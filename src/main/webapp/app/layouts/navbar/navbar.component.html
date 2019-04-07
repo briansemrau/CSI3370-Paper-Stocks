@@ -16,8 +16,8 @@
                     </span>
                 </a>
             </li>
-            <li *ngSwitchCase="true" class="nav-item">
-                <span *ngIf="credit != null" class="navbar-text">
+            <li *ngSwitchCase="true" class="nav-item" [ngSwitch]="credit != null">
+                <span *ngSwitchCase="true" class="navbar-text">
                     <fa-icon icon="money-bill"></fa-icon>
                     <span>Credits: {{formatCurrency(credit.credit, 'en', '$', 'USD')}}</span>
                 </span>
