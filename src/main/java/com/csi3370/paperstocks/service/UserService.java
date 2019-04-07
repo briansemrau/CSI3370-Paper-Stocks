@@ -45,13 +45,16 @@ public class UserService {
 
     private final PortfolioRepository portfolioRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, CreditRepository creditRepository, PortfolioRepository portfolioRepository) {
+    private final PortfolioService portfolioService;
+
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, AuthorityRepository authorityRepository, CacheManager cacheManager, CreditRepository creditRepository, PortfolioRepository portfolioRepository, PortfolioService portfolioService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
         this.creditRepository = creditRepository;
         this.portfolioRepository = portfolioRepository;
+        this.portfolioService = portfolioService;
     }
 
     public Optional<User> activateRegistration(String key) {
@@ -125,17 +128,7 @@ public class UserService {
         this.clearUserCaches(newUser);
         log.debug("Created Information for User: {}", newUser);
 
-        Credit credit = new Credit();
-        credit.setCredit(10000.0);
-        credit.setUser(newUser);
-        creditRepository.save(credit);
-        log.debug("Created Information for Credit: {}", credit);
-
-        Portfolio portfolio = new Portfolio();
-        portfolio.setName("My Portfolio");
-        portfolio.setUser(newUser);
-        portfolioRepository.save(portfolio);
-        log.debug("Created Information for Portfolio: {}", portfolio);
+        createDefaultChildren(newUser);
 
         return newUser;
     }
@@ -144,6 +137,7 @@ public class UserService {
         if (existingUser.getActivated()) {
              return false;
         }
+        deleteChildren(existingUser);
         userRepository.delete(existingUser);
         userRepository.flush();
         this.clearUserCaches(existingUser);
@@ -179,17 +173,7 @@ public class UserService {
         this.clearUserCaches(user);
         log.debug("Created Information for User: {}", user);
 
-        Credit credit = new Credit();
-        credit.setCredit(10000.0);
-        credit.setUser(user);
-        creditRepository.save(credit);
-        log.debug("Created Information for Credit: {}", credit);
-
-        Portfolio portfolio = new Portfolio();
-        portfolio.setName("My Portfolio");
-        portfolio.setUser(user);
-        portfolioRepository.save(portfolio);
-        log.debug("Created Information for Portfolio: {}", portfolio);
+        createDefaultChildren(user);
 
         return user;
     }
@@ -253,6 +237,7 @@ public class UserService {
 
     public void deleteUser(String login) {
         userRepository.findOneByLogin(login).ifPresent(user -> {
+            deleteChildren(user);
             userRepository.delete(user);
             this.clearUserCaches(user);
             log.debug("Deleted User: {}", user);
@@ -305,6 +290,7 @@ public class UserService {
             .findAllByActivatedIsFalseAndCreatedDateBefore(Instant.now().minus(3, ChronoUnit.DAYS))
             .forEach(user -> {
                 log.debug("Deleting not activated user {}", user.getLogin());
+                deleteChildren(user);
                 userRepository.delete(user);
                 this.clearUserCaches(user);
             });
@@ -320,5 +306,24 @@ public class UserService {
     private void clearUserCaches(User user) {
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_LOGIN_CACHE)).evict(user.getLogin());
         Objects.requireNonNull(cacheManager.getCache(UserRepository.USERS_BY_EMAIL_CACHE)).evict(user.getEmail());
+    }
+
+    private void createDefaultChildren(User user) {
+        Credit credit = new Credit();
+        credit.setCredit(10000.0);
+        credit.setUser(user);
+        creditRepository.save(credit);
+        log.debug("Created Information for Credit: {}", credit);
+
+        Portfolio portfolio = new Portfolio();
+        portfolio.setName("My Portfolio");
+        portfolio.setUser(user);
+        portfolioRepository.save(portfolio);
+        log.debug("Created Information for Portfolio: {}", portfolio);
+    }
+
+    private void deleteChildren(User user) {
+        portfolioRepository.findByUser(user).forEach(portfolio -> portfolioService.delete(portfolio.getId()));
+        creditRepository.deleteById(user.getId());
     }
 }

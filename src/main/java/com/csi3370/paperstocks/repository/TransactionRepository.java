@@ -1,8 +1,11 @@
 package com.csi3370.paperstocks.repository;
 
-import com.csi3370.paperstocks.domain.Transaction;
+import com.csi3370.paperstocks.domain.*;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
 
 
 /**
@@ -12,5 +15,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
 
+    List<Transaction> findAllByPortfolio(@NotNull Portfolio portfolio);
 
 }
