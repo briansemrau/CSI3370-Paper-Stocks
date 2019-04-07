@@ -1,6 +1,6 @@
 package com.csi3370.paperstocks.repository;
 
-import com.csi3370.paperstocks.domain.Portfolio;
+import com.csi3370.paperstocks.domain.*;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.stereotype.Repository;
 
@@ -15,5 +15,7 @@ public interface PortfolioRepository extends JpaRepository<Portfolio, Long> {
 
     @Query("select portfolio from Portfolio portfolio where portfolio.user.login = ?#{principal.username}")
     List<Portfolio> findByUserIsCurrentUser();
+
+    List<Portfolio> findByUser(User user);
 
 }

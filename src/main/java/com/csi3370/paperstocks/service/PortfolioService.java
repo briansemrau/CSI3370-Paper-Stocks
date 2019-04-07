@@ -6,7 +6,6 @@ import com.csi3370.paperstocks.web.rest.errors.PortfolioNotEmptyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +23,14 @@ public class PortfolioService {
 
     private final PortfolioRepository portfolioRepository;
 
-    private final CacheManager cacheManager;
+    private final ShareRepository shareRepository;
 
-    public PortfolioService(PortfolioRepository portfolioRepository, CacheManager cacheManager) {
+    private final TransactionRepository transactionRepository;
+
+    public PortfolioService(PortfolioRepository portfolioRepository, ShareRepository shareRepository, TransactionRepository transactionRepository) {
         this.portfolioRepository = portfolioRepository;
-        this.cacheManager = cacheManager;
+        this.shareRepository = shareRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     /**
@@ -83,11 +85,19 @@ public class PortfolioService {
      */
     public void delete(Long id) {
         log.debug("Request to delete Portfolio : {}", id);
+        portfolioRepository.findById(id).ifPresent(portfolio -> {
+            shareRepository.findAllByPortfolio(portfolio).forEach(shareRepository::delete);
+            transactionRepository.findAllByPortfolio(portfolio).forEach(transactionRepository::delete);
+        });
+        portfolioRepository.deleteById(id);
+    }
+
+    public void userTryToDelete(Long id) {
         Optional<Portfolio> portfolio = portfolioRepository.findById(id);
         if (portfolio.isPresent() &&
-            !portfolio.get().getShares().isEmpty()) {
+            shareRepository.findAllByPortfolio(portfolio.get()).size() > 0) {
             throw new PortfolioNotEmptyException();
         }
-        portfolioRepository.deleteById(id);
+        delete(id);
     }
 }

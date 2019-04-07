@@ -135,7 +135,7 @@ public class PortfolioResource {
             !portfolio.get().getUser().getLogin().equals(SecurityUtils.getCurrentUserLogin().orElse(""))) {
             return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
         }
-        portfolioService.delete(id);
+        portfolioService.userTryToDelete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
 }

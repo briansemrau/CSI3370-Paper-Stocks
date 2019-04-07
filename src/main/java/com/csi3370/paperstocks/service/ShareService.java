@@ -41,15 +41,9 @@ public class ShareService {
 
     private final CreditRepository creditRepository;
 
-    private final CacheManager cacheManager;
-
-    private final CreditResource creditResource;
-
-    public ShareService(ShareRepository shareRepository, CacheManager cacheManager, StockDataService stockDataService, CreditResource creditResource, UserRepository userRepository, CreditRepository creditRepository) {
+    public ShareService(ShareRepository shareRepository, StockDataService stockDataService, UserRepository userRepository, CreditRepository creditRepository) {
         this.shareRepository = shareRepository;
-        this.cacheManager = cacheManager;
         this.stockDataService = stockDataService;
-        this.creditResource = creditResource;
         this.userRepository = userRepository;
         this.creditRepository = creditRepository;
     }
@@ -63,7 +57,6 @@ public class ShareService {
     public Share save(Share share) {
         log.debug("Request to save Share : {}", share);
         Share result = shareRepository.save(share);
-        clearShareCache(result);
         return result;
     }
 
@@ -101,15 +94,10 @@ public class ShareService {
         log.debug("Request to delete Share : {}", id);
         shareRepository.findById(id).ifPresent(share -> {
             shareRepository.delete(share);
-            this.clearShareCache(share);
         });
     }
 
-    private void clearShareCache(Share share) {
-        //Objects.requireNonNull(cacheManager.getCache(Portfolio.class.getName() + ".shares")).evict(share);
-    }
-
-    private void buyShare(Share share) {
+    public void buyShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
         double price = lastTrade.getPrice().doubleValue();
@@ -186,6 +174,7 @@ public class ShareService {
 
     }
 
-
 }
+
+    }
 

@@ -30,6 +30,7 @@ public class Credit implements Serializable {
     @OneToOne(optional = false)
     @NotNull
     @JoinColumn(unique = true)
+    @MapsId
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

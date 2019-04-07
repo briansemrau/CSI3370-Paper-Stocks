@@ -37,5 +37,61 @@
         <p>
             <span>If you like JHipster, don't forget to give us a star on</span> <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener">GitHub</a>!
         </p>
+
+        <details open="" *ngFor="let category of defaultCategories">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+    <!--                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">-->
+    <!--                    <th jhiSortBy="id"><span>Last</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+    <!--                    <th jhiSortBy="ticker"><span>Change</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+    <!--                    <th jhiSortBy="quantity"><span>Change %</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+    <!--                    <th jhiSortBy="portfolio.id"><span>Market Cap</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+    <!--                    <th></th>-->
+    <!--                </tr>-->
+                    <tr>
+                        <th>{{category.name}}</th>
+                        <th><span>Last</span></th>
+                        <th><span>Change</span></th>
+                        <th><span>Change %</span></th>
+                        <th><span>Market Cap</span></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let symbol of category.symbols">
+                        <td><a [href]="symbolUrl(symbol)" target="_blank">{{symbol}}</a></td>
+                        <td>{{tickerTable[symbol]?.latestPrice}}</td>
+                        <td>{{tickerTable[symbol]?.change}}</td>
+                        <td>{{tickerTable[symbol]?.changePercent}}</td>
+                        <td>{{tickerTable[symbol]?.marketCap}}</td>
+    <!--                    <td class="text-right">-->
+    <!--                        <div class="btn-group flex-btn-group-container">-->
+    <!--                            <button type="submit"-->
+    <!--                                    [routerLink]="['/share', share.id, 'view' ]"-->
+    <!--                                    class="btn btn-info btn-sm">-->
+    <!--                                <fa-icon [icon]="'eye'"></fa-icon>-->
+    <!--                                <span class="d-none d-md-inline">View</span>-->
+    <!--                            </button>-->
+    <!--                            <button type="submit"-->
+    <!--                                    [routerLink]="['/share', share.id, 'edit']"-->
+    <!--                                    class="btn btn-primary btn-sm">-->
+    <!--                                <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+    <!--                                <span class="d-none d-md-inline">Edit</span>-->
+    <!--                            </button>-->
+    <!--                            <button type="submit"-->
+    <!--                                    [routerLink]="['/', 'share', { outlets: { popup: share.id + '/delete'} }]"-->
+    <!--                                    replaceUrl="true"-->
+    <!--                                    queryParamsHandling="merge"-->
+    <!--                                    class="btn btn-danger btn-sm">-->
+    <!--                                <fa-icon [icon]="'times'"></fa-icon>-->
+    <!--                                <span class="d-none d-md-inline">Delete</span>-->
+    <!--                            </button>-->
+    <!--                        </div>-->
+    <!--                    </td>-->
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </details>
     </div>
 </div>

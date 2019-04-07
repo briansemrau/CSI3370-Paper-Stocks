@@ -1,7 +1,6 @@
 package com.csi3370.paperstocks.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -10,8 +9,6 @@ import javax.persistence.*;
 import javax.validation.constraints.*;
 
 import java.io.Serializable;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.Objects;
 
 /**
@@ -30,14 +27,6 @@ public class Portfolio implements Serializable {
 
     @Column(name = "name")
     private String name;
-
-    @OneToMany(mappedBy = "portfolio", cascade = CascadeType.ALL)
-    //@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Share> shares = new HashSet<>();
-    
-    @OneToMany(mappedBy = "portfolio")
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    private Set<Transaction> transactions = new HashSet<>();
 
     @ManyToOne(optional = false)
     @NotNull
@@ -64,56 +53,6 @@ public class Portfolio implements Serializable {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Set<Share> getShares() {
-        return shares;
-    }
-
-    public Portfolio shares(Set<Share> shares) {
-        this.shares = shares;
-        return this;
-    }
-
-    public Portfolio addShare(Share share) {
-        this.shares.add(share);
-        share.setPortfolio(this);
-        return this;
-    }
-
-    public Portfolio removeShare(Share share) {
-        this.shares.remove(share);
-        share.setPortfolio(null);
-        return this;
-    }
-
-    public void setShares(Set<Share> shares) {
-        this.shares = shares;
-    }
-
-    public Set<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public Portfolio transactions(Set<Transaction> transactions) {
-        this.transactions = transactions;
-        return this;
-    }
-
-    public Portfolio addTransaction(Transaction transaction) {
-        this.transactions.add(transaction);
-        transaction.setPortfolio(this);
-        return this;
-    }
-
-    public Portfolio removeTransaction(Transaction transaction) {
-        this.transactions.remove(transaction);
-        transaction.setPortfolio(null);
-        return this;
-    }
-
-    public void setTransactions(Set<Transaction> transactions) {
-        this.transactions = transactions;
     }
 
     public User getUser() {
