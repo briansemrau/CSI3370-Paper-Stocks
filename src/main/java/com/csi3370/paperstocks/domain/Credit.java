@@ -6,6 +6,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.http.ResponseEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.*;
 
 import java.io.Serializable;
 import java.util.Objects;
@@ -26,9 +27,9 @@ public class Credit implements Serializable {
     @Column(name = "credit")
     private double credit;
 
-    @OneToOne
+    @OneToOne(optional = false)
+    @NotNull
     @JoinColumn(unique = true)
-    @MapsId
     private User user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here, do not remove

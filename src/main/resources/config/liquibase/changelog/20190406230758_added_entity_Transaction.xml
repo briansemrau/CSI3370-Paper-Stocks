@@ -15,21 +15,36 @@
     <property name="floatType" value="float" dbms="mysql, oracle, mssql"/>
 
     <!--
-        Added the entity Credit.
+        Added the entity Transaction.
     -->
-    <changeSet id="20190403192729-1" author="jhipster">
-        <createTable tableName="credit">
+    <changeSet id="20190406230758-1" author="jhipster">
+        <createTable tableName="transaction">
             <column name="id" type="bigint" autoIncrement="${autoIncrement}">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="credit" type="double">
-                <constraints nullable="true" />
+            <column name="ticker" type="varchar(255)">
+                <constraints nullable="false" />
             </column>
-            <column name="user_id" type="bigint">
-                <constraints unique="true" nullable="false" uniqueConstraintName="ux_credit_user_id" />
+
+            <column name="quantity" type="integer">
+                <constraints nullable="false" />
             </column>
+
+            <column name="price_per_share" type="double">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="jhi_date" type="datetime">
+                <constraints nullable="false" />
+            </column>
+
+            <column name="portfolio_id" type="bigint">
+                <constraints nullable="false" />
+            </column>
+
             <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here, do not remove-->
         </createTable>
+        <dropDefaultValue tableName="transaction" columnName="jhi_date" columnDataType="datetime"/>
         
     </changeSet>
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here, do not remove-->

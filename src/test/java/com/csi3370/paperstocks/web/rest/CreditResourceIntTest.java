@@ -2,7 +2,7 @@ package com.csi3370.paperstocks.web.rest;
 
 import com.csi3370.paperstocks.Csi3370App;
 
-import com.csi3370.paperstocks.domain.Credit;
+import com.csi3370.paperstocks.domain.*;
 import com.csi3370.paperstocks.repository.*;
 import com.csi3370.paperstocks.web.rest.errors.ExceptionTranslator;
 
@@ -89,6 +89,11 @@ public class CreditResourceIntTest {
     public static Credit createEntity(EntityManager em) {
         Credit credit = new Credit()
             .credit(DEFAULT_CREDIT);
+        // Add required entity
+        User user = UserResourceIntTest.createEntity(em);
+        em.persist(user);
+        em.flush();
+        credit.setUser(user);
         return credit;
     }
 
