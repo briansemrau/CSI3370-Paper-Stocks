@@ -22,6 +22,9 @@ public interface ShareRepository extends JpaRepository<Share, Long> {
 
     List<Share> findAllByPortfolio(@NotNull Portfolio portfolio);
 
+    @Query("select share from Share share where share.portfolio.user.login = ?#{principal.username}")
+    Page<Share> findByUserIsCurrentUser(Pageable pageable);
+
     @Query("select share from Share share where share.portfolio.id = :#{#portfolio.id} and share.ticker = :ticker")
     Optional<Share> findOneByTickerAndPortfolioId(@Param("ticker") String ticker, @Param("portfolio") Portfolio portfolio);
 
