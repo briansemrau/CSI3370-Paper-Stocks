@@ -12,13 +12,12 @@
             </div>
         </div>
         <div class="col-md-8">
-            <form name="form" class="form" role="form" (ngSubmit)="buy()" #form="ngForm">
+            <form name="form" class="form" role="form" (ngSubmit)="deleteUser()" #form="ngForm">
                 <jhi-alert-error></jhi-alert-error>
                 <div class="form-group">
-                    <label class="form-control-label" for="field_ticker">To confirm deletion of this account,
+                    <label class="form-control-label">To confirm deletion of this account,
                     please enter "DELETE" into the field below.</label>
-                    <input type="text" class="form-control" name="ticker" id="field_ticker"
-                           [(ngModel)]="share.ticker" required/>
+                    <input type="text" class="form-control" name="" required/>
                     <div [hidden]="!(form.controls.ticker?.dirty && form.controls.ticker?.invalid)">
                         <small class="form-text text-danger"
                                [hidden]="!form.controls.ticker?.errors?.required">
