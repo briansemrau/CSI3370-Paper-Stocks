@@ -17,6 +17,15 @@
     </div>
 </div>
 
+<div class=""row>
+    <button type="submit"
+            (click)="updateData()"
+            class="btn btn-primary btn-sm"
+            style="background-color: #61a1cc">
+        <span class="d-none d-md-inline">Update Data</span>
+    </button>
+</div>
+
 <div class="row">
     <div class="col-md-12">
         <details open="" *ngFor="let category of defaultCategories">
