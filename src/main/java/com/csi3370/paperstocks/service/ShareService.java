@@ -76,7 +76,7 @@ public class ShareService {
      * Get all the shares in a portfolio.
      *
      * @param portfolioId the portfolio ID
-     * @param pageable the pagination information
+     * @param pageable    the pagination information
      * @return the list of entities
      */
     @Transactional(readOnly = true)
@@ -131,8 +131,7 @@ public class ShareService {
                 if (myCredit.isPresent()) {
                     double myValue = myCredit.get().getCredit();
                     //check that a user has enough money to buy the shares
-                    if((myValue-(price*numShares))>0)
-                    {
+                    if (((myValue - (price * numShares)) > 0) && (share.getQuantity() > 0)) {
                         double newValue = myValue - (price * numShares);
                         myCredit.get().setCredit(newValue);
 
@@ -147,12 +146,11 @@ public class ShareService {
 
                         //sumbits the transaction to the transaction repository
                         transactionRepository.save(newTransaction);
-                    }else{
+                    } else {
                         //throw an error
                         log.debug("User did not have enough money to buy shares");
                         throw new BadRequestAlertException("No money :(", "share", "idnull");
                     }
-
 
 
                     Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
@@ -167,7 +165,7 @@ public class ShareService {
                 }
             }
         }
-    return share;
+        return share;
     }
 
     public Share sellShare(Share share) {
@@ -182,14 +180,13 @@ public class ShareService {
         Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
 
 
-
         if (SecurityUtils.getCurrentUserLogin().isPresent()) {
             Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
             if (user.isPresent()) {
                 Optional<Credit> myCredit = creditRepository.findById(user.get().getId());
                 if (myCredit.isPresent()) {
                     //check to make sure that a user has enough shares in their account to sell
-                    if(existingShare.isPresent() && (existingShare.get().getQuantity()>share.getQuantity())) {
+                    if (existingShare.isPresent() && (existingShare.get().getQuantity() > share.getQuantity()) && (share.getQuantity() > 0)) {
                         double myValue = myCredit.get().getCredit();
                         double newValue = myValue + (price * numShares);
 
@@ -211,19 +208,22 @@ public class ShareService {
                             shareRepository.delete(share);
                             return shareRepository.save(existingShare.get());
 
+                        } else {
+                            shareRepository.save(share);
+                            return shareRepository.save(existingShare.get());
                         }
+
+
                     } else {
-                        shareRepository.save(share);
-                        return shareRepository.save(existingShare.get());
+                        throw new BadRequestAlertException("Bad Request", "share", "idnull");
                     }
-
-
-
                 }
             }
-        }
-        return share;
 
+
+        }
+
+        return share;
     }
 
 }
