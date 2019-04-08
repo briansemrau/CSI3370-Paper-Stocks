@@ -4,24 +4,43 @@
 Bootstrap tweaks
 ===============================================================*/
 
-body,
+body {
+    color: #c5c6c7;
+    font-weight: 300;
+}
 h1,
-h2,
+h2 {
+    color: #66fcf1;
+    font-weight: 300;
+}
 h3,
 h4 {
+    color: #c5c6c7;
     font-weight: 300;
 }
 
 a {
-    color: #533f03;
+    color: #c5c6c7;
     font-weight: bold;
 }
 
 a:hover {
-    color: #533f03;
+    color: #c5c6c7;
     font-weight: bold;
     /* make sure browsers use the pointer cursor for anchors, even with no href */
     cursor: pointer;
+}
+
+.modal-content {
+    background-color: #1f2833;
+}
+
+.form-control {
+    background-color: #0b0c10;
+}
+
+.close {
+    color: #c5c6c7;
 }
 
 /* ==========================================================================
@@ -54,6 +73,7 @@ Generic styles
     padding: 1.5%;
     margin-top: 20px;
     border: none;
+    background-color: #1f2833;
 }
 
 .error {
@@ -79,7 +99,7 @@ Generic styles
 }
 
 .readonly {
-    background-color: #eee;
+    background-color: #0b0c10;
     opacity: 1;
 }
 
@@ -126,6 +146,9 @@ Custom alerts for notification
             bottom: 55px;
         }
     }
+}
+.alert-custom {
+    background-color: #303e4f;
 }
 
 @media screen and (min-width: 480px) {
@@ -189,7 +212,7 @@ entity detail page css
             margin-bottom: 15px;
         }
         dd {
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #0b0c10;
             padding-left: 180px;
             margin-left: 0;
         }
