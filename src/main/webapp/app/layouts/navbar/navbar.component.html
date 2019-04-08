@@ -151,6 +151,12 @@
                             <span>Sign out</span>
                         </a>
                     </li>
+                    <li *ngSwitchCase="true">
+                        <a class="dropdown-item" (click)="deleteAccount()" id="deleteAccount">
+                            <fa-icon icon="trash" fixedWidth="true"></fa-icon>
+                            <span>Delete Account</span>
+                        </a>
+                    </li>
                     <li *ngSwitchCase="false">
                         <a class="dropdown-item" (click)="login()" id="login">
                             <fa-icon icon="sign-in-alt" fixedWidth="true"></fa-icon>

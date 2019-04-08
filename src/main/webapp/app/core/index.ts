@@ -8,4 +8,5 @@ export * from './auth/user-route-access-service';
 export * from './login/login-modal.service';
 export * from './login/login.service';
 export * from './user/user.service';
+export * from './user/deleteaccount-modal.service';
 export * from './core.module';

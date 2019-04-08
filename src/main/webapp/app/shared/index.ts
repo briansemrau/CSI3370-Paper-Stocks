@@ -12,3 +12,4 @@ export * from './shared.module';
 export * from './util/datepicker-adapter';
 export * from './buyshare/share-buy-modal.component';
 export * from './sellshare/share-sell-modal.component';
+export * from './deleteaccount/deleteaccount-modal.component';

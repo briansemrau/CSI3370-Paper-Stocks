@@ -5,13 +5,27 @@ import { NgbDateMomentAdapter } from './util/datepicker-adapter';
 import { Csi3370SharedLibsModule, Csi3370SharedCommonModule, JhiLoginModalComponent, HasAnyAuthorityDirective } from './';
 import { ShareBuyModalComponent } from 'app/shared/buyshare/share-buy-modal.component';
 import { ShareSellModalComponent } from 'app/shared/sellshare/share-sell-modal.component';
+import { DeleteAccountModalComponent } from 'app/shared/deleteaccount/deleteaccount-modal.component';
 
 @NgModule({
     imports: [Csi3370SharedLibsModule, Csi3370SharedCommonModule],
-    declarations: [JhiLoginModalComponent, HasAnyAuthorityDirective, ShareBuyModalComponent, ShareSellModalComponent],
+    declarations: [
+        JhiLoginModalComponent,
+        HasAnyAuthorityDirective,
+        ShareBuyModalComponent,
+        ShareSellModalComponent,
+        DeleteAccountModalComponent
+    ],
     providers: [{ provide: NgbDateAdapter, useClass: NgbDateMomentAdapter }],
-    entryComponents: [JhiLoginModalComponent, ShareBuyModalComponent, ShareSellModalComponent],
-    exports: [Csi3370SharedCommonModule, JhiLoginModalComponent, HasAnyAuthorityDirective, ShareBuyModalComponent, ShareSellModalComponent],
+    entryComponents: [JhiLoginModalComponent, ShareBuyModalComponent, ShareSellModalComponent, DeleteAccountModalComponent],
+    exports: [
+        Csi3370SharedCommonModule,
+        JhiLoginModalComponent,
+        HasAnyAuthorityDirective,
+        ShareBuyModalComponent,
+        ShareSellModalComponent,
+        DeleteAccountModalComponent
+    ],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class Csi3370SharedModule {

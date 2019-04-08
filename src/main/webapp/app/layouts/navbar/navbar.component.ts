@@ -6,7 +6,7 @@ import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { formatCurrency } from '@angular/common';
 
 import { VERSION } from 'app/app.constants';
-import { Account, AccountService, LoginModalService, LoginService } from 'app/core';
+import { Account, AccountService, DeleteAccountModalService, LoginModalService, LoginService } from 'app/core';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { CreditService } from 'app/entities/credit';
 import { ICredit } from 'app/shared/model/credit.model';
@@ -30,6 +30,7 @@ export class NavbarComponent implements OnInit {
         private loginService: LoginService,
         private accountService: AccountService,
         private loginModalService: LoginModalService,
+        private deleteAccountModalService: DeleteAccountModalService,
         private profileService: ProfileService,
         private creditService: CreditService,
         private router: Router
@@ -83,6 +84,10 @@ export class NavbarComponent implements OnInit {
         this.collapseNavbar();
         this.loginService.logout();
         this.router.navigate(['']);
+    }
+
+    deleteAccount() {
+        this.modalRef = this.deleteAccountModalService.open();
     }
 
     toggleNavbar() {
