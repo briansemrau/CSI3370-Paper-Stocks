@@ -87,7 +87,7 @@ public class TransactionResource {
     @GetMapping("/transactions")
     public ResponseEntity<List<Transaction>> getAllTransactions(Pageable pageable) {
         log.debug("REST request to get a page of Transactions");
-        Page<Transaction> page = transactionRepository.findAll(pageable);
+        Page<Transaction> page = transactionRepository.findByUserIsCurrentUser(pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/transactions");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

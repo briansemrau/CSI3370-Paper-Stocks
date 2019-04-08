@@ -34,7 +34,7 @@ export class ShareService {
 
     queryByPortfolioId(portfolioId: number, req?: any): Observable<EntityArrayResponseType> {
         const params = createRequestOption(req);
-        return this.http.get<IShare[]>(`portfolio/${portfolioId}/shares`, { params: params, observe: 'response' });
+        return this.http.get<IShare[]>(`portfolios/${portfolioId}/shares`, { params: params, observe: 'response' });
     }
 
     delete(id: number): Observable<HttpResponse<any>> {
