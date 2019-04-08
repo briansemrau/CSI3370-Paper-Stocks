@@ -1,4 +1,5 @@
 package com.csi3370.paperstocks.web.rest;
+
 import com.csi3370.paperstocks.domain.*;
 import com.csi3370.paperstocks.security.AuthoritiesConstants;
 import com.csi3370.paperstocks.service.ShareService;
@@ -44,7 +45,8 @@ public class ShareResource {
      * POST  /shares : Create a new share.
      *
      * @param share the share to create
-     * @return the ResponseEntity with status 201 (Created) and with body the new share, or with status 400 (Bad Request) if the share has already an ID
+     * @return the ResponseEntity with status 201 (Created) and with body the new share, or with status 400 (Bad
+     * Request) if the share has already an ID
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PostMapping("/shares")
@@ -64,9 +66,8 @@ public class ShareResource {
      * PUT  /shares : Updates an existing share.
      *
      * @param share the share to update
-     * @return the ResponseEntity with status 200 (OK) and with body the updated share,
-     * or with status 400 (Bad Request) if the share is not valid,
-     * or with status 500 (Internal Server Error) if the share couldn't be updated
+     * @return the ResponseEntity with status 200 (OK) and with body the updated share, or with status 400 (Bad Request)
+     * if the share is not valid, or with status 500 (Internal Server Error) if the share couldn't be updated
      * @throws URISyntaxException if the Location URI syntax is incorrect
      */
     @PutMapping("/shares")
@@ -122,6 +123,7 @@ public class ShareResource {
         Optional<Share> share = shareService.findOne(id);
         return ResponseUtil.wrapOrNotFound(share);
     }
+
     /**
      * DELETE  /shares/:id : delete the "id" share.
      *
@@ -135,6 +137,7 @@ public class ShareResource {
         shareService.delete(id);
         return ResponseEntity.ok().headers(HeaderUtil.createEntityDeletionAlert(ENTITY_NAME, id.toString())).build();
     }
+
     @PostMapping("/shares/buy")
     public ResponseEntity<Share> buyShare(@Valid @RequestBody Share share) throws URISyntaxException {
         log.debug("REST request to buy Share : {}", share);
@@ -147,10 +150,7 @@ public class ShareResource {
     @PostMapping("/shares/sell")
     public ResponseEntity<Void> sellShare(@Valid @RequestBody Share share) throws URISyntaxException {
         log.debug("REST request to sell Share : {}", share);
-        Share result = shareService.sellShare(share);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntitySellAlert(ENTITY_NAME, result.getTicker())).build();
-
-        }
-
-
+        shareService.sellShare(share);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntitySellAlert(ENTITY_NAME, share.getTicker())).build();
+    }
 }
