@@ -118,9 +118,15 @@
                 <a class="nav-link dropdown-toggle" ngbDropdownToggle href="javascript:void(0);" id="account-menu">
                   <span *ngIf="!getImageUrl()">
                     <fa-icon icon="user"></fa-icon>
-                    <span>
-                      Account
-                    </span>
+
+                      <!-- Account btn user swap -->
+                      <span *ngIf="!isAuthenticated() || account == null">
+                          Account
+                      </span>
+                      <span *ngIf="account && isAuthenticated()">
+                          {{account.login}}
+                      </span>
+
                   </span>
                   <span *ngIf="getImageUrl()">
                       <img [src]="getImageUrl()" class="profile-image rounded-circle" alt="Avatar">

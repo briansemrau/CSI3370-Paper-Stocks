@@ -6,7 +6,7 @@ import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { formatCurrency } from '@angular/common';
 
 import { VERSION } from 'app/app.constants';
-import { AccountService, LoginModalService, LoginService } from 'app/core';
+import { Account, AccountService, LoginModalService, LoginService } from 'app/core';
 import { ProfileService } from 'app/layouts/profiles/profile.service';
 import { CreditService } from 'app/entities/credit';
 import { ICredit } from 'app/shared/model/credit.model';
@@ -24,6 +24,7 @@ export class NavbarComponent implements OnInit {
     modalRef: NgbModalRef;
     version: string;
     credit: ICredit;
+    account: Account;
 
     constructor(
         private loginService: LoginService,
@@ -60,6 +61,9 @@ export class NavbarComponent implements OnInit {
         this.profileService.getProfileInfo().then(profileInfo => {
             this.inProduction = profileInfo.inProduction;
             this.swaggerEnabled = profileInfo.swaggerEnabled;
+        });
+        this.accountService.identity().then((account: Account) => {
+            this.account = account;
         });
     }
 
