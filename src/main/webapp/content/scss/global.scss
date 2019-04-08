@@ -38,8 +38,20 @@ a:hover {
 .form-control {
     background-color: #0b0c10;
 }
+.form-control:enabled {
+    color: #c5c6c7;
+    font-weight: bold;
+    background-color: #303e4f;
+}
 
 .close {
+    color: #c5c6c7;
+}
+.dropdown-menu {
+    color: #c5c6c7;
+    background-color: #303e4f;
+}
+.dropdown-item {
     color: #c5c6c7;
 }
 
