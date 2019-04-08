@@ -205,7 +205,7 @@ public class ShareService {
                             .pricePerShare(price)
                             .date(now)
                             .portfolio(share.getPortfolio())
-                            .quantity(share.getQuantity())
+                            .quantity(-share.getQuantity())
                             .ticker(share.getTicker());
 
                         //submits the transaction to the transaction repository
@@ -216,11 +216,12 @@ public class ShareService {
 
                         //subtract the shares from the users account
                         existingShare.get().setQuantity(existingShare.get().getQuantity() - share.getQuantity());
-                        shareRepository.save(existingShare.get());
-                        creditRepository.save(myCredit.get());
                         if (existingShare.get().getQuantity() == 0) {
-                            shareRepository.delete(share);
+                            shareRepository.delete(existingShare.get());
+                        } else {
+                            shareRepository.save(existingShare.get());
                         }
+                        creditRepository.save(myCredit.get());
                     } else {
                         throw new BadRequestAlertException("You does not have enough shares.", "share", "idnull");
                     }
