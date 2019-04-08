@@ -112,6 +112,11 @@ public class ShareService {
     public Share buyShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
+
+        if (lastTrade == null) {
+            throw new BadRequestAlertException("Ticker symbol must be a tradeable stock.", "share", "idnull");
+        }
+
         double price = lastTrade.getPrice().doubleValue();
         double numShares = share.getQuantity();
         log.debug("Request to buy Share : {}", share);
