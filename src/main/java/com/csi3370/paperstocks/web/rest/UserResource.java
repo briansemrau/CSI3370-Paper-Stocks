@@ -3,7 +3,7 @@ package com.csi3370.paperstocks.web.rest;
 import com.csi3370.paperstocks.config.Constants;
 import com.csi3370.paperstocks.domain.User;
 import com.csi3370.paperstocks.repository.UserRepository;
-import com.csi3370.paperstocks.security.AuthoritiesConstants;
+import com.csi3370.paperstocks.security.*;
 import com.csi3370.paperstocks.service.MailService;
 import com.csi3370.paperstocks.service.UserService;
 import com.csi3370.paperstocks.service.dto.UserDTO;
@@ -174,10 +174,17 @@ public class UserResource {
      * @return the ResponseEntity with status 200 (OK)
      */
     @DeleteMapping("/users/{login:" + Constants.LOGIN_REGEX + "}")
-    @PreAuthorize("hasRole(\"" + AuthoritiesConstants.ADMIN + "\")")
-    public ResponseEntity<Void> deleteUser(@PathVariable String login) {
+    public ResponseEntity<?> deleteUser(@PathVariable String login) {
         log.debug("REST request to delete User: {}", login);
-        userService.deleteUser(login);
+        if (SecurityUtils.getCurrentUserLogin().isPresent()) {
+            if (!SecurityUtils.getCurrentUserLogin().get().equals(login)) {
+                return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+            } else {
+                userService.deleteUser(login);
+            }
+        } else {
+            return new ResponseEntity<>("error.http.403", HttpStatus.FORBIDDEN);
+        }
         return ResponseEntity.ok().headers(HeaderUtil.createAlert( "A user is deleted with identifier " + login, login)).build();
     }
 }
