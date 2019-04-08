@@ -3,26 +3,22 @@ package com.csi3370.paperstocks.service;
 import com.csi3370.paperstocks.domain.*;
 import com.csi3370.paperstocks.repository.CreditRepository;
 import com.csi3370.paperstocks.repository.ShareRepository;
+import com.csi3370.paperstocks.repository.TransactionRepository;
 import com.csi3370.paperstocks.repository.UserRepository;
 import com.csi3370.paperstocks.security.SecurityUtils;
-import com.csi3370.paperstocks.web.rest.CreditResource;
-import io.github.jhipster.web.util.ResponseUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.http.ResponseEntity;
 import pl.zankowski.iextrading4j.api.marketdata.LastTrade;
 
 
-import org.springframework.cache.CacheManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.*;
-
-import static com.csi3370.paperstocks.domain.Credit_.credit;
 
 /**
  * Service Implementation for managing Share.
@@ -41,11 +37,14 @@ public class ShareService {
 
     private final CreditRepository creditRepository;
 
-    public ShareService(ShareRepository shareRepository, StockDataService stockDataService, UserRepository userRepository, CreditRepository creditRepository) {
+    private final TransactionRepository transactionRepository;
+
+    public ShareService(ShareRepository shareRepository, StockDataService stockDataService, UserRepository userRepository, CreditRepository creditRepository, TransactionRepository transactionRepository) {
         this.shareRepository = shareRepository;
         this.stockDataService = stockDataService;
         this.userRepository = userRepository;
         this.creditRepository = creditRepository;
+        this.transactionRepository = transactionRepository;
     }
 
     /**
@@ -113,24 +112,54 @@ public class ShareService {
                 Optional<Credit> myCredit = creditRepository.findById(user.get().getId());
                 if (myCredit.isPresent()) {
                     double myValue = myCredit.get().getCredit();
-                    double newValue = myValue - (price * numShares);
-                    myCredit.get().setCredit(newValue);
+                    //check that a user has enough money to buy the shares
+                    if((myValue-(price*numShares))>0)
+                    {
+                        double newValue = myValue - (price * numShares);
+                        myCredit.get().setCredit(newValue);
+
+                        creditRepository.save(myCredit.get());
+
+                        //gets the current time for the Transaction
+                        Instant now = Instant.now();
+
+                        //crafts the Transaction to submit to the repository
+                        Transaction newTransaction = new Transaction().pricePerShare(price).date(now)
+                            .portfolio(share.getPortfolio()).quantity(share.getQuantity()).ticker(share.getTicker());
+
+                        //sumbits the transaction to the transaction repository
+                        transactionRepository.save(newTransaction);
+                    }else{
+                        //throw an error
+                        log.debug("User did not have enough money to buy shares");
+                    }
 
 
-                    creditRepository.save(myCredit.get());
-                    shareRepository.save(share);
+
+                    Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
+                    if (existingShare.isPresent()) {
+                        existingShare.get().setQuantity(existingShare.get().getQuantity() + share.getQuantity());
+                        shareRepository.save(existingShare.get());
+                    } else {
+                        shareRepository.save(share);
+                    }
                 }
             }
         }
 
     }
 
-    private void sellShare(Share share) {
+    public void sellShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
         double price = lastTrade.getPrice().doubleValue();
         double numShares = share.getQuantity();
         log.debug("Request to buy Share : {}", share);
+        //gets the current time
+        Instant now = Instant.now();
+        //
+        Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
+
 
 
         if (SecurityUtils.getCurrentUserLogin().isPresent()) {
@@ -138,14 +167,35 @@ public class ShareService {
             if (user.isPresent()) {
                 Optional<Credit> myCredit = creditRepository.findById(user.get().getId());
                 if (myCredit.isPresent()) {
-                    double myValue = myCredit.get().getCredit();
-                    double newValue = myValue + (price * numShares);
+                    //check to make sure that a user has enough shares in their account to sell
+                    if(existingShare.isPresent() && (existingShare.get().getQuantity()>share.getQuantity())) {
+                        double myValue = myCredit.get().getCredit();
+                        double newValue = myValue + (price * numShares);
 
-                    myCredit.get().setCredit(newValue);
+                        //crafts the Transaction to submit to the repository
+                        Transaction newTransaction = new Transaction().pricePerShare(price).date(now).portfolio(share.getPortfolio())
+                            .quantity(share.getQuantity()).ticker(share.getTicker());
+
+                        //sumbits the transaction to the transaction repository
+                        transactionRepository.save(newTransaction);
+
+                        //sets the users credit to the amount they had before the sale, plus the proceeds
+                        myCredit.get().setCredit(newValue);
+
+                        //subtract the shares from the users account
+                        existingShare.get().setQuantity(existingShare.get().getQuantity() - share.getQuantity());
+                        shareRepository.save(existingShare.get());
+                        creditRepository.save(myCredit.get());
+                        if (existingShare.get().getQuantity() == 0) {
+                            shareRepository.delete(share);
+
+                        }
+                    } else {
+                        shareRepository.save(share);
+                    }
 
 
-                    creditRepository.save(myCredit.get());
-                    shareRepository.save(share);
+
                 }
             }
         }

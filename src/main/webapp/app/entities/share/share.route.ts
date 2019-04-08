@@ -90,4 +90,32 @@ export const sharePopupRoute: Routes = [
         canActivate: [UserRouteAccessService],
         outlet: 'popup'
     }
+
+    // {
+    //     path: ':id/buy',
+    //     component: ShareBuyPopupComponent,
+    //     resolve: {
+    //         share: ShareResolve
+    //     },
+    //     data: {
+    //         authorities: ['ROLE_USER'],
+    //         pageTitle: 'Shares'
+    //     },
+    //     canActivate: [UserRouteAccessService],
+    //     outlet: 'popup'
+    // },
+    //
+    // {
+    //     path: ':id/sell',
+    //     component: ShareSellPopupComponent,
+    //     resolve: {
+    //         share: ShareResolve
+    //     },
+    //     data: {
+    //         authorities: ['ROLE_USER'],
+    //         pageTitle: 'Shares'
+    //     },
+    //     canActivate: [UserRouteAccessService],
+    //     outlet: 'popup'
+    // }
 ];
