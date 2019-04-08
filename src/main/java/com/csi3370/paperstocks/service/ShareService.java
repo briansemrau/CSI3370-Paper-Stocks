@@ -6,6 +6,7 @@ import com.csi3370.paperstocks.repository.ShareRepository;
 import com.csi3370.paperstocks.repository.TransactionRepository;
 import com.csi3370.paperstocks.repository.UserRepository;
 import com.csi3370.paperstocks.security.SecurityUtils;
+import com.csi3370.paperstocks.web.rest.errors.BadRequestAlertException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -96,7 +97,7 @@ public class ShareService {
         });
     }
 
-    public void buyShare(Share share) {
+    public Share buyShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
         double price = lastTrade.getPrice().doubleValue();
@@ -132,6 +133,7 @@ public class ShareService {
                     }else{
                         //throw an error
                         log.debug("User did not have enough money to buy shares");
+                        throw new BadRequestAlertException("No money :(", "share", "idnull");
                     }
 
 
@@ -140,16 +142,18 @@ public class ShareService {
                     if (existingShare.isPresent()) {
                         existingShare.get().setQuantity(existingShare.get().getQuantity() + share.getQuantity());
                         shareRepository.save(existingShare.get());
+                        return shareRepository.save(existingShare.get());
                     } else {
                         shareRepository.save(share);
+                        return shareRepository.save(share);
                     }
                 }
             }
         }
-
+    return share;
     }
 
-    public void sellShare(Share share) {
+    public Share sellShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
         double price = lastTrade.getPrice().doubleValue();
@@ -188,10 +192,12 @@ public class ShareService {
                         creditRepository.save(myCredit.get());
                         if (existingShare.get().getQuantity() == 0) {
                             shareRepository.delete(share);
+                            return shareRepository.save(existingShare.get());
 
                         }
                     } else {
                         shareRepository.save(share);
+                        return shareRepository.save(existingShare.get());
                     }
 
 
@@ -199,6 +205,7 @@ public class ShareService {
                 }
             }
         }
+        return share;
 
     }
 

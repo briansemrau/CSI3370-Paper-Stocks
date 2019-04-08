@@ -108,7 +108,6 @@ public class ShareResource {
         Optional<Share> share = shareService.findOne(id);
         return ResponseUtil.wrapOrNotFound(share);
     }
-
     /**
      * DELETE  /shares/:id : delete the "id" share.
      *
@@ -125,16 +124,17 @@ public class ShareResource {
     @PostMapping("/shares/buy")
     public ResponseEntity<Share> buyShare(@Valid @RequestBody Share share) throws URISyntaxException {
         log.debug("REST request to buy Share : {}", share);
-        shareService.buyShare(share);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntityBuyAlert(ENTITY_NAME, share.getId().toString())).build();
-
+        Share result = shareService.buyShare(share);
+        return ResponseEntity.ok()
+            .headers(HeaderUtil.createEntityBuyAlert(ENTITY_NAME, result.getTicker()))
+            .body(result);
     }
 
     @PostMapping("/shares/sell")
     public ResponseEntity<Void> sellShare(@Valid @RequestBody Share share) throws URISyntaxException {
         log.debug("REST request to sell Share : {}", share);
-        shareService.sellShare(share);
-        return ResponseEntity.ok().headers(HeaderUtil.createEntitySellAlert(ENTITY_NAME, share.getId().toString())).build();
+        Share result = shareService.sellShare(share);
+        return ResponseEntity.ok().headers(HeaderUtil.createEntitySellAlert(ENTITY_NAME, result.getTicker())).build();
 
         }
 

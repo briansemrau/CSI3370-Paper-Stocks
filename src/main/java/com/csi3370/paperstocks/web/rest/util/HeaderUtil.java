@@ -37,12 +37,12 @@ public final class HeaderUtil {
 
     public static HttpHeaders createEntityBuyAlert(String entityName, String param)
     {
-        return createAlert("A " + entityName + " was bought with identifier" + param, param);
+        return createAlert("A " + entityName + " of " + param + " was bought", param);
     }
 
     public static HttpHeaders createEntitySellAlert(String entityName,String param)
     {
-        return createAlert("A " + entityName + " was sold with identifier" + param, param);
+        return createAlert("A " + entityName + " of " + param + "was sold", param);
     }
 
     public static HttpHeaders createFailureAlert(String entityName, String errorKey, String defaultMessage) {
