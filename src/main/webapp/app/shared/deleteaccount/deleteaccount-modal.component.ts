@@ -9,6 +9,7 @@ import { IShare, Share } from 'app/shared/model/share.model';
 import { ShareService } from 'app/entities/share/share.service';
 import { IPortfolio } from 'app/shared/model/portfolio.model';
 import { PortfolioService } from 'app/entities/portfolio';
+import { Account, AccountService, UserService } from 'app/core';
 
 @Component({
     selector: 'jhi-deleteaccount-modal',
@@ -24,6 +25,8 @@ export class DeleteAccountModalComponent implements AfterViewInit {
     constructor(
         private jhiAlertService: JhiAlertService,
         private shareService: ShareService,
+        private userService: UserService,
+        private accountService: AccountService,
         private portfolioService: PortfolioService,
         private elementRef: ElementRef,
         private renderer: Renderer,
@@ -46,11 +49,15 @@ export class DeleteAccountModalComponent implements AfterViewInit {
         this.activeModal.dismiss('cancel');
     }
 
-    buy() {
-        this.shareService.sell(this.share).subscribe(
+    deleteUser() {
+        let login: string = '';
+        this.accountService.identity().then((account: Account) => {
+            login = account.login;
+        });
+        this.userService.delete(login).subscribe(
             data => {
                 this.sellError = false;
-                this.activeModal.dismiss('sell success');
+                this.activeModal.dismiss('delete success');
             },
             error => {
                 this.sellError = true;
