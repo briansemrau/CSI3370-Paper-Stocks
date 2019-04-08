@@ -32,7 +32,7 @@
                 <td>{{share.quantity}}</td>
                 <td>
                     <div *ngIf="share.portfolio">
-                        <a [routerLink]="['../portfolio', share.portfolio?.id, 'view' ]" >{{share.portfolio?.id}}</a>
+                        <a [routerLink]="['../portfolio', share.portfolio?.id, 'view' ]" >{{share.portfolio?.name}}</a>
                     </div>
                 </td>
                 <td class="text-right">

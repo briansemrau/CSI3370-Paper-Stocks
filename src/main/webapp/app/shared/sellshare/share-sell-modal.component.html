@@ -48,7 +48,7 @@
                         <option *ngIf="!form.value.portfolio" [ngValue]="null" selected></option>
                         <option
                             [ngValue]="portfolioOption.id === share.portfolio?.id ? share.portfolio : portfolioOption"
-                            *ngFor="let portfolioOption of portfolios; trackBy: trackPortfolioById">{{portfolioOption.id}}</option>
+                            *ngFor="let portfolioOption of portfolios; trackBy: trackPortfolioById">{{portfolioOption.name}}</option>
                     </select>
                 </div>
                 <div [hidden]="!(form.controls.portfolio?.dirty && form.controls.portfolio?.invalid)">
