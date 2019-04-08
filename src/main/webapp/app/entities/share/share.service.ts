@@ -37,9 +37,10 @@ export class ShareService {
     }
 
     buy(share: IShare): Observable<EntityResponseType> {
-        return this.http.post<IShare>(this.resourceUrl, share, { observe: 'response' });
+        return this.http.post<IShare>(`${this.resourceUrl}/buy`, share, { observe: 'response' });
     }
+
     sell(share: IShare): Observable<EntityResponseType> {
-        return this.http.post<IShare>(this.resourceUrl, share, { observe: 'response' });
+        return this.http.post<IShare>(`${this.resourceUrl}/sell`, share, { observe: 'response' });
     }
 }

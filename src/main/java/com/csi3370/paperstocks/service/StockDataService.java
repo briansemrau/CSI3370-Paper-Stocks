@@ -22,7 +22,9 @@ public class StockDataService {
         final List<LastTrade> lastTradeList = tradingClient.executeRequest(new LastTradeRequestBuilder()
             .withSymbol(symbol)
             .build());
-        return lastTradeList.get(0);
+        if (lastTradeList.size() > 0)
+            return lastTradeList.get(0);
+        else return null;
     }
 
 }

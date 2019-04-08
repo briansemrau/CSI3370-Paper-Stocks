@@ -3,6 +3,7 @@ import { NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { JhiEventManager } from 'ng-jhipster';
 
 import { LoginModalService, AccountService, Account } from 'app/core';
+import { ShareBuyModalService } from 'app/entities/share/share-buy-modal.service';
 
 @Component({
     selector: 'jhi-home',
@@ -83,6 +84,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     constructor(
         private accountService: AccountService,
         private loginModalService: LoginModalService,
+        private shareBuyModalService: ShareBuyModalService,
         private eventManager: JhiEventManager
     ) {}
 
@@ -124,6 +126,10 @@ export class HomeComponent implements OnInit, OnDestroy {
 
     login() {
         this.modalRef = this.loginModalService.open();
+    }
+
+    buyShare() {
+        this.modalRef = this.shareBuyModalService.open();
     }
 
     symbolUrl(symbol) {
