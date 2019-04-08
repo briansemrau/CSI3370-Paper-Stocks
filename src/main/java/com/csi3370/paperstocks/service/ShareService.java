@@ -69,7 +69,7 @@ public class ShareService {
     @Transactional(readOnly = true)
     public Page<Share> findAll(Pageable pageable) {
         log.debug("Request to get all Shares");
-        return shareRepository.findAll(pageable);
+        return shareRepository.findByUserIsCurrentUser(pageable);
     }
 
     /**
@@ -141,44 +141,54 @@ public class ShareService {
                         Instant now = Instant.now();
 
                         //crafts the Transaction to submit to the repository
-                        Transaction newTransaction = new Transaction().pricePerShare(price).date(now)
-                            .portfolio(share.getPortfolio()).quantity(share.getQuantity()).ticker(share.getTicker());
+                        Transaction newTransaction = new Transaction()
+                            .pricePerShare(price)
+                            .date(now)
+                            .portfolio(share.getPortfolio())
+                            .quantity(share.getQuantity())
+                            .ticker(share.getTicker());
 
-                        //sumbits the transaction to the transaction repository
+                        //submits the transaction to the transaction repository
                         transactionRepository.save(newTransaction);
                     } else {
-                        //throw an error
-                        log.debug("User did not have enough money to buy shares");
-                        throw new BadRequestAlertException("No money :(", "share", "idnull");
+                        throw new BadRequestAlertException("You have insufficient credit to buy these shares.", "share", "idnull");
                     }
 
 
                     Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
                     if (existingShare.isPresent()) {
                         existingShare.get().setQuantity(existingShare.get().getQuantity() + share.getQuantity());
-                        shareRepository.save(existingShare.get());
                         return shareRepository.save(existingShare.get());
                     } else {
                         shareRepository.save(share);
                         return shareRepository.save(share);
                     }
+                } else {
+                    throw new BadRequestAlertException("User must have credit.", "share", "idnull");
                 }
             }
+        } else {
+            throw new BadRequestAlertException("You must be logged in to buy shares.", "share", "idnull");
         }
-        return share;
+
+        return null;
     }
 
-    public Share sellShare(Share share) {
+    public void sellShare(Share share) {
         LastTrade lastTrade;
         lastTrade = stockDataService.getLastTrade(share.getTicker());
+
+        if (lastTrade == null) {
+            throw new BadRequestAlertException("Ticker symbol must be a tradeable stock.", "share", "idnull");
+        }
+
         double price = lastTrade.getPrice().doubleValue();
         double numShares = share.getQuantity();
-        log.debug("Request to buy Share : {}", share);
+        log.debug("Request to sell Share : {}", share);
         //gets the current time
         Instant now = Instant.now();
         //
         Optional<Share> existingShare = shareRepository.findOneByTickerAndPortfolioId(share.getTicker(), share.getPortfolio());
-
 
         if (SecurityUtils.getCurrentUserLogin().isPresent()) {
             Optional<User> user = userRepository.findOneByLogin(SecurityUtils.getCurrentUserLogin().get());
@@ -186,15 +196,19 @@ public class ShareService {
                 Optional<Credit> myCredit = creditRepository.findById(user.get().getId());
                 if (myCredit.isPresent()) {
                     //check to make sure that a user has enough shares in their account to sell
-                    if (existingShare.isPresent() && (existingShare.get().getQuantity() > share.getQuantity()) && (share.getQuantity() > 0)) {
+                    if (existingShare.isPresent() && (existingShare.get().getQuantity() >= share.getQuantity()) && (share.getQuantity() > 0)) {
                         double myValue = myCredit.get().getCredit();
                         double newValue = myValue + (price * numShares);
 
                         //crafts the Transaction to submit to the repository
-                        Transaction newTransaction = new Transaction().pricePerShare(price).date(now).portfolio(share.getPortfolio())
-                            .quantity(share.getQuantity()).ticker(share.getTicker());
+                        Transaction newTransaction = new Transaction()
+                            .pricePerShare(price)
+                            .date(now)
+                            .portfolio(share.getPortfolio())
+                            .quantity(share.getQuantity())
+                            .ticker(share.getTicker());
 
-                        //sumbits the transaction to the transaction repository
+                        //submits the transaction to the transaction repository
                         transactionRepository.save(newTransaction);
 
                         //sets the users credit to the amount they had before the sale, plus the proceeds
@@ -206,24 +220,17 @@ public class ShareService {
                         creditRepository.save(myCredit.get());
                         if (existingShare.get().getQuantity() == 0) {
                             shareRepository.delete(share);
-                            return shareRepository.save(existingShare.get());
-
-                        } else {
-                            shareRepository.save(share);
-                            return shareRepository.save(existingShare.get());
                         }
-
-
                     } else {
-                        throw new BadRequestAlertException("Bad Request", "share", "idnull");
+                        throw new BadRequestAlertException("You does not have enough shares.", "share", "idnull");
                     }
+                } else {
+                    throw new BadRequestAlertException("User must have credit to sell shares.", "share", "idnull");
                 }
             }
-
-
+        } else {
+            throw new BadRequestAlertException("You must be logged in to sell shares.", "share", "idnull");
         }
-
-        return share;
     }
 
 }
