@@ -1,54 +1,35 @@
 <div class="row">
-    <div class="col-md-3">
-        <span class="hipster img-fluid rounded"></span>
-    </div>
-    <div class="col-md-9">
-        <h1 class="display-4">Welcome, Java Hipster!</h1>
-        <p class="lead">This is your homepage</p>
+    <div class="col-md-12">
 
-        <div [ngSwitch]="isAuthenticated()">
-            <div class="alert alert-success" *ngSwitchCase="true">
-                <span id="home-logged-message" *ngIf="account"
-                   > You are logged in as user "{{account.login}}". </span>
-            </div>
-
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>If you want to </span>
-                <a class="alert-link" (click)="login()">sign in</a><span>, you can try the default accounts:<br/>- Administrator (login="admin" and password="admin") <br/>- User (login="user" and password="user").</span>
-            </div>
-            <div class="alert alert-warning" *ngSwitchCase="false">
-                <span>You don't have an account yet?</span>&nbsp;
-                <a class="alert-link" routerLink="register">Register a new account</a>
-            </div>
+        <div class="col-md-9" style="float: left" align="left">
+            <h1 class="display-4">PaperStocks</h1>
+            <p class="lead">Market Homepage</p>
         </div>
 
-        <p>
-            If you have any question on JHipster:
-        </p>
+        <div class="col-md-3" style="float: right" align="right">
+            <div [ngSwitch]="isAuthenticated()" align="right">
+                <div class="alert alert-warning" *ngSwitchCase="false">
+                    <span>Don't have an account yet?</span>
+                    <a class="alert-link" routerLink="register">Sign-up here!</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-        <ul>
-            <li><a href="https://www.jhipster.tech/" target="_blank" rel="noopener">JHipster homepage</a></li>
-            <li><a href="http://stackoverflow.com/tags/jhipster/info" target="_blank" rel="noopener">JHipster on Stack Overflow</a></li>
-            <li><a href="https://github.com/jhipster/generator-jhipster/issues?state=open" target="_blank" rel="noopener">JHipster bug tracker</a></li>
-            <li><a href="https://gitter.im/jhipster/generator-jhipster" target="_blank" rel="noopener">JHipster public chat room</a></li>
-            <li><a href="https://twitter.com/java_hipster" target="_blank" rel="noopener">follow @java_hipster on Twitter</a></li>
-        </ul>
-
-        <p>
-            <span>If you like JHipster, don't forget to give us a star on</span> <a href="https://github.com/jhipster/generator-jhipster" target="_blank" rel="noopener">GitHub</a>!
-        </p>
-
+<div class="row">
+    <div class="col-md-12">
         <details open="" *ngFor="let category of defaultCategories">
-            <div class="table-responsive">
+            <div class="table-responsive" style="border: 3px dashed lightgray">
                 <table class="table table-striped">
                     <thead>
-    <!--                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">-->
-    <!--                    <th jhiSortBy="id"><span>Last</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
-    <!--                    <th jhiSortBy="ticker"><span>Change</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
-    <!--                    <th jhiSortBy="quantity"><span>Change %</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
-    <!--                    <th jhiSortBy="portfolio.id"><span>Market Cap</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
-    <!--                    <th></th>-->
-    <!--                </tr>-->
+                    <!--                <tr jhiSort [(predicate)]="predicate" [(ascending)]="reverse" [callback]="reset.bind(this)">-->
+                    <!--                    <th jhiSortBy="id"><span>Last</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+                    <!--                    <th jhiSortBy="ticker"><span>Change</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+                    <!--                    <th jhiSortBy="quantity"><span>Change %</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+                    <!--                    <th jhiSortBy="portfolio.id"><span>Market Cap</span> <fa-icon [icon]="'sort'"></fa-icon></th>-->
+                    <!--                    <th></th>-->
+                    <!--                </tr>-->
                     <tr>
                         <th>{{category.name}}</th>
                         <th><span>Last</span></th>
@@ -64,30 +45,24 @@
                         <td>{{tickerTable[symbol]?.change}}</td>
                         <td>{{tickerTable[symbol]?.changePercent}}</td>
                         <td>{{tickerTable[symbol]?.marketCap}}</td>
-    <!--                    <td class="text-right">-->
-    <!--                        <div class="btn-group flex-btn-group-container">-->
-    <!--                            <button type="submit"-->
-    <!--                                    [routerLink]="['/share', share.id, 'view' ]"-->
-    <!--                                    class="btn btn-info btn-sm">-->
-    <!--                                <fa-icon [icon]="'eye'"></fa-icon>-->
-    <!--                                <span class="d-none d-md-inline">View</span>-->
-    <!--                            </button>-->
-    <!--                            <button type="submit"-->
-    <!--                                    [routerLink]="['/share', share.id, 'edit']"-->
-    <!--                                    class="btn btn-primary btn-sm">-->
-    <!--                                <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
-    <!--                                <span class="d-none d-md-inline">Edit</span>-->
-    <!--                            </button>-->
-    <!--                            <button type="submit"-->
-    <!--                                    [routerLink]="['/', 'share', { outlets: { popup: share.id + '/delete'} }]"-->
-    <!--                                    replaceUrl="true"-->
-    <!--                                    queryParamsHandling="merge"-->
-    <!--                                    class="btn btn-danger btn-sm">-->
-    <!--                                <fa-icon [icon]="'times'"></fa-icon>-->
-    <!--                                <span class="d-none d-md-inline">Delete</span>-->
-    <!--                            </button>-->
-    <!--                        </div>-->
-    <!--                    </td>-->
+                        <td class="text-right" *jhiHasAnyAuthority="'ROLE_USER'">
+                            <div class="btn-group flex-btn-group-container">
+                                <button type="submit"
+                                        (click)="buyShare()"
+                                        class="btn btn-info btn-sm"
+                                        style="background-color: #28a745">
+<!--                                    <fa-icon [icon]="'eye'"></fa-icon>-->
+                                    <span class="d-none d-md-inline">Buy</span>
+                                </button>
+                                <button type="submit"
+                                        (click)="buyShare()"
+                                        class="btn btn-primary btn-sm"
+                                        style="background-color: #dc3545">
+<!--                                    <fa-icon [icon]="'pencil-alt'"></fa-icon>-->
+                                    <span class="d-none d-md-inline">Sell</span>
+                                </button>
+                            </div>
+                        </td>
                     </tr>
                     </tbody>
                 </table>
