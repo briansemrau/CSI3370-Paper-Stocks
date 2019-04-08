@@ -103,7 +103,7 @@ public class ShareResource {
      * @param pageable the pagination information
      * @return the ResponseEntity with status 200 (OK) and the list of shares in body
      */
-    @GetMapping("/portfolios/{id}/shares")
+    @GetMapping("/portfolios/{portfolioId}/shares")
     public ResponseEntity<List<Share>> getAllSharesByPortfolioId(Pageable pageable, @PathVariable Long portfolioId) {
         log.debug("REST request to get a page of Shares in Portfolio");
         Page<Share> page = shareService.findAllByPortfolioId(portfolioId, pageable);

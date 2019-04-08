@@ -49,17 +49,20 @@ export class PortfolioDetailComponent implements OnInit, OnDestroy {
     previousState() {
         window.history.back();
     }
+
     loadAll() {
-        this.shareService
-            .queryByPortfolioId(this.portfolio.id, {
-                page: this.page,
-                size: this.itemsPerPage,
-                sort: this.sort()
-            })
-            .subscribe(
-                (res: HttpResponse<IShare[]>) => this.paginateShares(res.body, res.headers),
-                (res: HttpErrorResponse) => this.onError(res.message)
-            );
+        if (this.portfolio != null) {
+            this.shareService
+                .queryByPortfolioId(this.portfolio.id, {
+                    page: this.page,
+                    size: this.itemsPerPage,
+                    sort: this.sort()
+                })
+                .subscribe(
+                    (res: HttpResponse<IShare[]>) => this.paginateShares(res.body, res.headers),
+                    (res: HttpErrorResponse) => this.onError(res.message)
+                );
+        }
     }
 
     reset() {
@@ -74,9 +77,10 @@ export class PortfolioDetailComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.loadAll();
+        //this.loadAll();
         this.activatedRoute.data.subscribe(({ portfolio }) => {
             this.portfolio = portfolio;
+            this.loadAll();
         });
         this.accountService.identity().then(account => {
             this.currentAccount = account;
