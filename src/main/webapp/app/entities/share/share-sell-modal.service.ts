@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 
-import { ShareBuyModalComponent } from 'app/shared';
+import { ShareSellModalComponent } from 'app/shared';
 
 @Injectable({ providedIn: 'root' })
-export class ShareBuyModalService {
+export class ShareSellModalService {
     private isOpen = false;
     constructor(private modalService: NgbModal) {}
 
@@ -13,7 +13,7 @@ export class ShareBuyModalService {
             return;
         }
         this.isOpen = true;
-        const modalRef = this.modalService.open(ShareBuyModalComponent);
+        const modalRef = this.modalService.open(ShareSellModalComponent);
         modalRef.componentInstance.share.ticker = symbol;
         modalRef.result.then(
             result => {

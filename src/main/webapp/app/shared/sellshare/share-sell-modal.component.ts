@@ -1,23 +1,22 @@
-import { Component, AfterViewInit, Renderer, ElementRef } from '@angular/core';
+import { Component, AfterViewInit, Renderer, ElementRef, Input } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { filter, map } from 'rxjs/operators';
-import { JhiEventManager, JhiAlertService } from 'ng-jhipster';
+import { JhiAlertService } from 'ng-jhipster';
 
 import { IShare, Share } from 'app/shared/model/share.model';
-import { StateStorageService } from 'app/core';
 
-import { ShareService } from './share.service';
+import { ShareService } from 'app/entities/share/share.service';
 import { IPortfolio } from 'app/shared/model/portfolio.model';
 import { PortfolioService } from 'app/entities/portfolio';
 
 @Component({
-    selector: 'jhi-share-buy-modal',
-    templateUrl: './share-buy-modal.component.html'
+    selector: 'jhi-share-sell-modal',
+    templateUrl: './share-sell-modal.component.html'
 })
-export class ShareBuyModalComponent implements AfterViewInit {
-    buyError: boolean;
-    share: IShare = new Share(null, 'AAAA', 1, null);
+export class ShareSellModalComponent implements AfterViewInit {
+    sellError: boolean;
+    @Input() public share: IShare = new Share(null, 'AAAA', 1, null);
     portfolio: IPortfolio;
 
     portfolios: IPortfolio[];
@@ -43,18 +42,18 @@ export class ShareBuyModalComponent implements AfterViewInit {
     }
 
     cancel() {
-        this.buyError = false;
+        this.sellError = false;
         this.activeModal.dismiss('cancel');
     }
 
     buy() {
-        this.shareService.buy(this.share).subscribe(
+        this.shareService.sell(this.share).subscribe(
             data => {
-                this.buyError = false;
-                this.activeModal.dismiss('buy success');
+                this.sellError = false;
+                this.activeModal.dismiss('sell success');
             },
             error => {
-                this.buyError = true;
+                this.sellError = true;
             }
         );
     }
