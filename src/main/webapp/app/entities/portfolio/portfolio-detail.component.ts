@@ -51,7 +51,7 @@ export class PortfolioDetailComponent implements OnInit, OnDestroy {
     }
     loadAll() {
         this.shareService
-            .query({
+            .queryByPortfolioId(this.portfolio.id, {
                 page: this.page,
                 size: this.itemsPerPage,
                 sort: this.sort()

@@ -72,6 +72,18 @@ public class ShareService {
         return shareRepository.findAll(pageable);
     }
 
+    /**
+     * Get all the shares in a portfolio.
+     *
+     * @param portfolioId the portfolio ID
+     * @param pageable the pagination information
+     * @return the list of entities
+     */
+    @Transactional(readOnly = true)
+    public Page<Share> findAllByPortfolioId(Long portfolioId, Pageable pageable) {
+        log.debug("Request to get all Shares in Portfolio");
+        return shareRepository.findAllByPortfolioId(portfolioId, pageable);
+    }
 
     /**
      * Get one share by id.

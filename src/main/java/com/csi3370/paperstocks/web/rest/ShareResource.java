@@ -1,5 +1,5 @@
 package com.csi3370.paperstocks.web.rest;
-import com.csi3370.paperstocks.domain.Share;
+import com.csi3370.paperstocks.domain.*;
 import com.csi3370.paperstocks.security.AuthoritiesConstants;
 import com.csi3370.paperstocks.service.ShareService;
 import com.csi3370.paperstocks.web.rest.errors.BadRequestAlertException;
@@ -92,6 +92,20 @@ public class ShareResource {
     public ResponseEntity<List<Share>> getAllShares(Pageable pageable) {
         log.debug("REST request to get a page of Shares");
         Page<Share> page = shareService.findAll(pageable);
+        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/shares");
+        return ResponseEntity.ok().headers(headers).body(page.getContent());
+    }
+
+    /**
+     * GET  /shares : get all the shares by portfolio.
+     *
+     * @param pageable the pagination information
+     * @return the ResponseEntity with status 200 (OK) and the list of shares in body
+     */
+    @GetMapping("/portfolio/{id}/shares")
+    public ResponseEntity<List<Share>> getAllSharesByPortfolioId(Pageable pageable, @PathVariable Long portfolioId) {
+        log.debug("REST request to get a page of Shares in Portfolio");
+        Page<Share> page = shareService.findAllByPortfolioId(portfolioId, pageable);
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page, "/api/shares");
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }

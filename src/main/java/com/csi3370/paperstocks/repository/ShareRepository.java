@@ -1,6 +1,7 @@
 package com.csi3370.paperstocks.repository;
 
 import com.csi3370.paperstocks.domain.*;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,13 +18,11 @@ import java.util.Optional;
 @Repository
 public interface ShareRepository extends JpaRepository<Share, Long> {
 
+    Page<Share> findAllByPortfolioId(Long portfolio_id, Pageable pageable);
 
     List<Share> findAllByPortfolio(@NotNull Portfolio portfolio);
 
     @Query("select share from Share share where share.portfolio.id = :#{#portfolio.id} and share.ticker = :ticker")
     Optional<Share> findOneByTickerAndPortfolioId(@Param("ticker") String ticker, @Param("portfolio") Portfolio portfolio);
-
-
-
 
 }
